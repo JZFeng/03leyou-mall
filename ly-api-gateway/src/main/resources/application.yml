@@ -22,6 +22,8 @@ eureka:
 zuul:
   prefix: /api
   retryable: true
+  routes:
+    item-service: /item/**
 
 ribbon:
   ConnectTimeout: 250 # 连接超时时间(ms)
