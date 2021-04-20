@@ -12,19 +12,20 @@ import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
-@RestController
+@Controller
 @RequestMapping("brand")
 public class BrandController {
 
     @Autowired
     private BrandService brandService;
 
-    @RequestMapping("page")
+    @GetMapping("page")
     public ResponseEntity<PageResult<Brand>> queryBrandByPage(
             @RequestParam(name = "page", defaultValue = "0") Integer page,
             @RequestParam(name = "rows", defaultValue = "5") Integer rows,
@@ -39,4 +40,11 @@ public class BrandController {
 
         return ResponseEntity.ok(result);
     }
+
+    @PostMapping
+    public ResponseEntity<Void> saveBrand(Brand brand, @RequestParam("cids") List<Long> cids) {
+        this.brandService.saveBrand(brand, cids);
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
 }
