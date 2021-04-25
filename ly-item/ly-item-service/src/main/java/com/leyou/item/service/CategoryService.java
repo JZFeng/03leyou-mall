@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CategoryService {
@@ -22,5 +23,17 @@ public class CategoryService {
         record.setParentId(pid);
         List<Category> categoryList = this.categoryMapper.select(record);
         return categoryList;
+    }
+
+    public List<Category> queryByBrandId(Long bid) {
+        return this.categoryMapper.queryByBrandId(bid);
+    }
+
+    public List<String> queryNameByIds(List<Long> ids) {
+       /* return ids.stream().map(id ->{
+            return this.categoryMapper.selectByPrimaryKey(id).getName();
+        }).collect(Collectors.toList());*/
+
+        return this.categoryMapper.selectByIdList(ids).stream().map(category -> {return category.getName();}).collect(Collectors.toList());
     }
 }

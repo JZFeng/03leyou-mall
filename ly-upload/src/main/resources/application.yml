@@ -7,6 +7,15 @@ spring:
     multipart:
       max-file-size: 5MB
 
+fdfs:
+  so-timeout: 1501
+  connect-timeout: 601
+  thumb-image:
+    width: 60
+    height: 60
+  tracker-list:
+    - jz-backup:22122
+
 eureka:
   client:
     service-url:

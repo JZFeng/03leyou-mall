@@ -8,7 +8,6 @@ package com.leyou.item.controller;
 import com.leyou.common.pojo.PageResult;
 import com.leyou.item.pojo.Brand;
 import com.leyou.item.service.BrandService;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -47,4 +46,13 @@ public class BrandController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
+    @GetMapping("cid/{cid}")
+    public ResponseEntity<List<Brand>> queryBrandByCid(@PathVariable(name = "cid") Long cid) {
+        List<Brand> brands =  this.brandService.queryBrandByCid(cid);
+        if(brands == null || brands.size() < 1) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(brands);
+    }
 }

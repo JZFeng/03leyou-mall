@@ -5,7 +5,6 @@
 
 package com.leyou.item.service;
 
-import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.leyou.common.pojo.PageResult;
@@ -30,7 +29,7 @@ public class BrandService {
     **/
     public PageResult<Brand> queryBrandByPageAndSort(Integer page, Integer rows, String sortBy, Boolean desc, String key) {
 
-        //过滤
+        //准备查询条件
         Example example = new Example(Brand.class);
         if(StringUtils.isNotBlank(key)) {
             example.createCriteria().andLike("name", "%" + key + "%").orEqualTo("letter", key);
@@ -52,8 +51,13 @@ public class BrandService {
     @Transactional
     public void saveBrand(Brand brand, List<Long> cids) {
         this.brandMapper.insertSelective(brand);
+
         for (Long cid : cids) {
             this.brandMapper.insertCategoryBrand(cid, brand.getId());
         }
+    }
+
+    public List<Brand> queryBrandByCid(Long cid) {
+        return this.brandMapper.queryBrandByCid(cid);
     }
 }
