@@ -16,8 +16,8 @@ public class SpecificationService {
     @Autowired
     private SpecificationMapper specificationMapper;
 
-    public Specification queryByCategoryId(Long id) {
-        Specification specification = this.specificationMapper.selectByPrimaryKey(id);
+    public Specification queryByCategoryId(Long cid) {
+        Specification specification = this.specificationMapper.selectByPrimaryKey(cid);
         return specification;
     }
 }

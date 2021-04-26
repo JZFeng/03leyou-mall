@@ -57,70 +57,50 @@
         <v-editor v-model="goods.spuDetail.description" upload-url="/upload/image"/>
       </v-stepper-content>
       <!--3、规格参数-->
+      
+    <!--3、规格参数-->
       <v-stepper-content step="3">
-        <v-flex class="xs10 mx-auto px-3">
-          <!--遍历整个规格参数-->
-          <v-card class="my-2">
-            <v-container grid-list-md fluid>
-            <v-layout wrap row justify-space-between class="px-5">
-              <v-flex xs12 sm5 v-for="param in specs" :key="param.name">
-                <v-text-field :label="param.name" v-model="param.v" :suffix="param.unit || ''"
-                 />
-              </v-flex>
-            </v-layout>
-          </v-container>
-          </v-card>
-        </v-flex>
+          <v-flex class="xs10 mx-auto px-3">
+              <!--遍历整个规格参数，获取每一组-->
+              <v-card v-for="spec in specifications" :key="spec.group" class="my-2">
+                  <!--组名称-->
+                  <v-card-title class="subheading">{{spec.group}}</v-card-title>
+                  <!--遍历组中的每个属性，并判断是否是全局属性，不是则不显示-->
+                  <v-card-text v-for="param in spec.params" :key="param.k" v-if="param.global" class="px-5">
+                      <!--判断是否有可选项，如果没有，则显示文本框。还要判断是否是数值类型，如果是把unit显示到后缀-->
+                      <v-text-field v-if="param.options.length <= 0" 
+                                    :label="param.k" v-model="param.v" :suffix="param.unit || ''"/>
+                      <!--否则，显示下拉选项-->
+                      <v-select v-else :label="param.k" v-model="param.v" :items="param.options"/>
+                  </v-card-text>
+              </v-card>
+          </v-flex>
       </v-stepper-content>
+
+
       <!--4、SKU属性-->
       <v-stepper-content step="4">
         <v-flex class="mx-auto">
-          <!--遍历特有规格参数-->
-          <v-card flat v-for="spec in specialSpecs" :key="spec.name">
-            <!--特有参数的标题-->
-            <div class="subheading">{{spec.name}}:</div>
-            <!--特有参数的待选项，需要判断是否有options，如果没有，展示文本框，让用户自己输入-->
-            <v-card-text class="px-5">
-              <div v-for="i in spec.options.length+1" :key="i" class="layout row px-5">
-                <v-text-field :placeholder="'新的' + spec.name + ':'" class="flex xs10" auto-grow
-                              v-model="spec.options[i-1]" v-bind:value="i" single-line hide-details/>
-
-                <v-btn @click="spec.options.splice(i-1,1)" v-if="i <= spec.options.length" icon>
-                  <i class="el-icon-delete"/>
-                </v-btn>
-              </div>
-            </v-card-text>
-          </v-card>
-          <v-card class="elevation-0">
-            <!--标题-->
-            <div class="subheading py-3">SKU列表:</div>
-            <v-divider/>
-            <!--SKU表格，hide-actions因此分页等工具条-->
-            <v-data-table :items="skus" :headers="headers" hide-actions item-key="indexes" class="elevation-0">
-              <template slot="items" slot-scope="props">
-                <tr @click="props.expanded = !props.expanded">
-                  <!--价格和库存展示为文本框-->
-                  <td v-for="(v,k) in props.item" :key="k" v-if="['price', 'stock'].includes(k)"
-                      class="text-xs-center">
-                    <v-text-field single-line v-model="props.item[k]" @click.stop=""/>
-                  </td>
-                  <!--enable展示为checkbox-->
-                  <td class="text-xs-center" v-else-if="k === 'enable'">
-                    <v-checkbox v-model="props.item[k]"/>
-                  </td>
-                  <!--indexes和images不展示，其它展示为普通文本-->
-                  <td class="text-xs-center" v-else-if="k !== 'images' && k !== 'indexes'">{{v.v}}</td>
-                </tr>
-              </template>
-              <!--点击表格后展开-->
-              <template slot="expand" slot-scope="props">
-                <v-card class="elevation-2 flex xs11 mx-auto my-2">
-                  <!--图片上传组件-->
-                  <v-upload v-model="props.item.images" url="/upload/image"/>
-                </v-card>
-              </template>
-            </v-data-table>
-          </v-card>
+            <!--遍历特有规格参数-->
+            <v-card flat v-for="spec in specialSpecs" :key="spec.k">
+                <!--特有参数的标题-->
+                <v-card-title class="subheading">{{spec.k}}:</v-card-title>
+                <!--特有参数的待选项，需要判断是否有options，如果没有，展示文本框，让用户自己输入-->
+                <v-card-text v-if="spec.options.length <= 0" class="px-5">
+                      <div v-for="i in spec.selected.length+1" :key="i" class="layout row">
+                        <v-text-field :label="'输入新的' + spec.k" v-model="spec.selected[i-1]" v-bind:value="i"/>
+                        <v-spacer/>>
+                        <v-btn small @click="spec.selected.splice(i-1,1)">删除</v-btn>
+                      </div>
+                </v-card-text>
+                <!--如果有options，需要展示成多个checkbox-->
+                <v-card-text v-else class="container fluid grid-list-xs">
+                    <v-layout row wrap class="px-5">
+                        <v-checkbox color="primary" v-for="o in spec.options" :key="o" class="flex xs3"
+                                    :label="o" v-model="spec.selected" :value="o"/>
+                    </v-layout>
+                </v-card-text>
+            </v-card>
         </v-flex>
         <!--提交按钮-->
         <v-flex xs3 offset-xs9>
@@ -163,7 +143,9 @@ export default {
       },
       brandOptions: [], // 品牌列表
       specs: [], // 规格参数的模板
-      specialSpecs: [] // 特有规格参数模板
+      specialSpecs: [], // 特有规格参数模板
+      specifications:[],
+      
     };
   },
   methods: {
@@ -311,8 +293,28 @@ export default {
                 }
               });
               this.specs = arr1;// 通用规格
-              this.specialSpecs = arr2;// 特有规格
+              // this.specialSpecs = arr2;// 特有规格
             });
+
+            this.$http.get("/item/spec/" + this.goods.categories[2].id)
+            .then(({data}) => {
+                // 保存全部规格
+                this.specifications = data;
+                // 对特有规格进行筛选
+                const temp = [];
+                data.forEach(({params}) => {
+                    params.forEach(({k, options, global}) => {
+                        if (!global) {
+                            temp.push({
+                                k, options,selected:[]
+                            })
+                        }
+                    })
+                })
+                this.specialSpecs = temp;
+          });
+
+
         }
       }
     }
