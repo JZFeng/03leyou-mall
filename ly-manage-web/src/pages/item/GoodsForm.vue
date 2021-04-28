@@ -319,77 +319,61 @@ export default {
       }
     }
   },
-  computed: {
-    skus() {
-      // 过滤掉用户没有填写数据的规格参数
-      const arr = this.specialSpecs.filter(s => s.options.length > 0);
-      // 通过reduce进行累加笛卡尔积
-      return arr.reduce(
-        (last, spec, index) => {
-          const result = [];
-          last.forEach(o => {
-            spec.options.forEach((option, i) => {
-              const obj = JSON.parse(JSON.stringify(o));
-              obj[spec.name] = {v:option, id:spec.id};
-              obj.indexes = (obj.indexes || '') + '_' +  i
-              if (index === arr.length - 1) {
-                obj.indexes = obj.indexes.substring(1);
-                // 如果发现是最后一组，则添加价格、库存等字段
-                Object.assign(obj, {
-                  price: 0,
-                  stock: 0,
-                  enable: false,
-                  images: []
-                });
-                if (this.isEdit) {
-                  // 如果是编辑，则回填sku信息
-                  const sku = this.goods.skus.get(obj.indexes);
-                  if (sku != null) {
-                    const { price, stock, enable, images } = sku;
-                    Object.assign(obj, {
-                      price: this.$format(price),
-                      stock,
-                      enable,
-                      images: images ? images.split(",") : [],
-                    });
-                  }
+  computed:{
+    skus(){
+        // 过滤掉用户没有填写数据的规格参数
+        const arr = this.specialSpecs.filter(s => s.selected.length > 0);
+        // 通过reduce进行累加笛卡尔积
+        return  arr.reduce((last, spec, index) => {
+            const result = [];
+            last.forEach(o => {
+                for(let i = 0; i < spec.selected.length; i++){
+                    const option = spec.selected[i];
+                    const obj = {};
+                    Object.assign(obj, o);
+                    obj[spec.k] = option;
+                    // 拼接当前这个特有属性的索引
+                    obj.indexes = (o.indexes||'') + '_'+ i
+                    if(index === arr.length - 1){
+                        // 如果发现是最后一组，则添加价格、库存等字段
+                        Object.assign(obj, { price:0, stock:0,enable:false, images:[]})
+                        // 去掉索引字符串开头的下划线
+                        obj.indexes = obj.indexes.substring(1);
+                    }
+                    result.push(obj);
                 }
-              }
-              result.push(obj);
-            });
-          });
-          return result;
-        },
-        [{}]
-      );
+            })
+            return result
+        },[{}])
     },
-    headers() {
-      if (this.skus.length <= 0) {
-        return [];
+    headers(){
+      if(this.skus.length <= 0){
+          return []
       }
       const headers = [];
+      // 获取skus中的任意一个，获取key，然后遍历其属性
       Object.keys(this.skus[0]).forEach(k => {
-        let value = k;
-        if (k === "price") {
-          // enable，表头要翻译成“价格”
-          k = "价格";
-        } else if (k === "stock") {
-          // enable，表头要翻译成“库存”
-          k = "库存";
-        } else if (k === "enable") {
-          // enable，表头要翻译成“是否启用”
-          k = "是否启用";
-        } else if (k === "images" || k === 'indexes') {
-          // 图片和索引不在表格中展示
-          return;
-        }
-        headers.push({
-          text: k,
-          align: "center",
-          sortable: false,
-          value
-        });
-      });
+          let value = k;
+          if(k === 'price'){
+              // enable，表头要翻译成“价格”
+              k = '价格'
+          }else if(k === 'stock'){
+              // enable，表头要翻译成“库存”
+              k = '库存';
+          }else if(k === 'enable'){
+              // enable，表头要翻译成“是否启用”
+              k = '是否启用'
+          } else if(k === 'indexes' || k === 'images'){
+              // 图片和索引不在表格中展示
+              return;
+          }
+          headers.push({
+              text: k,
+              align: 'center',
+              sortable: false,
+              value
+          })
+      })
       return headers;
     }
   }
