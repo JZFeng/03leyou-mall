@@ -31,6 +31,6 @@ public class Sku {
     private Date lastUpdateTime;
 
     @Transient
-    private Long stock;
+    private Integer stock;
 
 }
