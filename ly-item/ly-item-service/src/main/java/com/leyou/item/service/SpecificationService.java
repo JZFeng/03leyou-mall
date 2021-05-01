@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -46,4 +47,26 @@ public class SpecificationService {
 
         return res.toArray(new String[res.size()]);
     }
+
+    //后台实现求笛卡尔积,[ ["红","黄"],["2G"，"3G"],["64G","128G","256G"] ]
+    public static List<String> join(List<List<String>> specs, String separator) {
+
+        List<String> reduce = specs.stream().reduce(  (l1, l2) -> {
+            List<String> result = new ArrayList<>();
+
+            l1.forEach(
+                s1 -> {
+                    l2.forEach(s2 -> {
+                        result.add(s1 + separator + s2);
+                    });
+                }
+            );
+
+            return result;
+
+        }).get();
+
+        return reduce;
+    }
+
 }
