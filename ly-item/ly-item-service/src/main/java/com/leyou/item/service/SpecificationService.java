@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -26,17 +25,17 @@ public class SpecificationService {
     }
 
 
-    public static String[] mergeParams(String[][] params) {
+    public static List<String> mergeParams(List<List<String>> params) {
 
-        for(int i = 1; i < params.length; i++ ) {
-            params[i] = mergeTwoParams(params[i - 1], params[i] );
+        for( int i = 1; i < params.size(); i++ ) {
+            params.set( i, mergeTwoParams(params.get(i - 1), params.get(i)));
         }
 
-        return params[params.length - 1];
+        return params.get(params.size() - 1);
     }
 
 
-    private static String[] mergeTwoParams(String[] p1, String[] p2 ) {
+    private static List<String> mergeTwoParams(List<String> p1, List<String> p2 ) {
         List<String> res = new ArrayList<>();
 
         for( String s1 : p1) {
@@ -45,7 +44,7 @@ public class SpecificationService {
             }
         }
 
-        return res.toArray(new String[res.size()]);
+        return res;
     }
 
     //后台实现求笛卡尔积,[ ["红","黄"],["2G"，"3G"],["64G","128G","256G"] ]
@@ -68,5 +67,6 @@ public class SpecificationService {
 
         return reduce;
     }
+
 
 }
