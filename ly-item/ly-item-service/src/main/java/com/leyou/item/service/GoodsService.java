@@ -15,6 +15,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import tk.mybatis.mapper.entity.Example;
 
 import java.util.Arrays;
@@ -39,6 +40,9 @@ public class GoodsService {
 
     @Autowired
     private SkuMapper skuMapper;
+
+    @Autowired
+    private SkuService skuService;
 
     @Autowired
     private StockMapper stockMapper;
@@ -112,6 +116,40 @@ public class GoodsService {
             stock.setStock(sku.getStock());
             this.stockMapper.insertSelective(stock);
         }
+    }
+
+    @Transactional
+    public void updateGoods(SpuBo spu) {
+        List<Sku> skus = this.skuService.queryBySpuId(spu.getId());
+
+        //删除stock和sku
+        if(!CollectionUtils.isEmpty(skus)) {
+            List<Long> ids = skus.stream().map(sku -> {
+                return sku.getId();
+            }).collect(Collectors.toList());
+
+            Example example = new Example(Stock.class);
+            example.createCriteria().andIn("skuId", ids);
+            this.stockMapper.deleteByExample(example);
+
+            Sku record = new Sku();
+            record.setSpuId(spu.getId());
+            this.skuMapper.delete(record);
+        }
+
+        //新建sku和stock
+        saveSkuAndStork(spu.getSkus(), spu.getId());
+
+        //更新spu
+        spu.setLastUpdateTime(new Date());
+        spu.setCreateTime(null);
+        spu.setValid(null);
+        spu.setSaleable(null);
+        this.spuMapper.updateByPrimaryKeySelective(spu);
+
+        //更新SpuDetails
+        this.spuDetailsMapper.updateByPrimaryKeySelective(spu.getSpuDetails());
+
     }
 
     /*
