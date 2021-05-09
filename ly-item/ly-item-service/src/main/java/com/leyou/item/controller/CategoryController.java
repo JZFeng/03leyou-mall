@@ -57,4 +57,13 @@ public class CategoryController {
         return ResponseEntity.ok(categories);
     }
 
+    @GetMapping("names")
+    public ResponseEntity<List<String>> queryNameByIds(@RequestParam(name = "ids") List<Long> ids) {
+        List<String> names = this.categoryService.queryNameByIds(ids);
+        if(CollectionUtils.isEmpty(names)) {
+           return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(names);
+    }
+
 }
