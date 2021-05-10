@@ -7,7 +7,7 @@ package com.leyou.item.controller;
 
 import com.leyou.common.pojo.PageResult;
 import com.leyou.item.pojo.Sku;
-import com.leyou.item.pojo.SpuBo;
+import com.leyou.item.bo.SpuBo;
 import com.leyou.item.pojo.SpuDetails;
 import com.leyou.item.service.GoodsService;
 import com.leyou.item.service.SkuService;

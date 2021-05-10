@@ -3,8 +3,11 @@
  * @Date 4/24/21-2:11 PM
  */
 
-package com.leyou.item.pojo;
+package com.leyou.item.bo;
 
+import com.leyou.item.pojo.Sku;
+import com.leyou.item.pojo.Spu;
+import com.leyou.item.pojo.SpuDetails;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,7 +18,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class SpuBo extends Spu{
+public class SpuBo extends Spu {
     @Transient
     private String cname;
 
