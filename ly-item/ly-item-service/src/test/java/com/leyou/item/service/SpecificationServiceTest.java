@@ -1,13 +1,29 @@
 package com.leyou.item.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.leyou.item.LyItemService;
+import com.leyou.item.pojo.Param;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
-
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = LyItemService.class)
 class SpecificationServiceTest {
+
+    @Autowired
+    private SpecificationService specificationService;
+
+    @Autowired
+    private GoodsService goodsService;
+
+    @Autowired
+    private SpuDetailsService spuDetailsService;
 
     @Test
     void testJoin() {
@@ -137,4 +153,15 @@ class SpecificationServiceTest {
         System.out.println("笛卡尔积总共：" + reduce.size() + ";\n\r结果集为：" + reduce);
         Assert.assertTrue( reduce.size() == expected_size );
     }
+
+
+    @Test
+    public void testGetParams() throws JsonProcessingException {
+        Long spuId = 243l;
+        List<Param> all_params = specificationService.queryParamsBySpuId(spuId);
+        specificationService.querySpecialParamsBySpuId(spuId).forEach(System.out::println);
+        System.out.println("-----------------");
+        specificationService.queryGenericParamsBySpuId(spuId).forEach(System.out::println);
+    }
+
 }

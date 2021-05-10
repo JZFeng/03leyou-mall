@@ -60,4 +60,13 @@ public class BrandService {
     public List<Brand> queryBrandByCid(Long cid) {
         return this.brandMapper.queryBrandByCid(cid);
     }
+
+    public Brand queryBrandById(Long id) {
+        Brand res = null;
+        Brand brand = this.brandMapper.selectByPrimaryKey(id);
+        if(brand != null) {
+            res = brand;
+        }
+        return res;
+    }
 }

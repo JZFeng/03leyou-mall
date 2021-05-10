@@ -5,23 +5,81 @@
 
 package com.leyou.item.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.leyou.item.mapper.SpecificationMapper;
+import com.leyou.item.pojo.Param;
+import com.leyou.item.pojo.ParamGroup;
 import com.leyou.item.pojo.Specification;
+import com.leyou.item.pojo.SpuDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class SpecificationService {
 
+    public static long param_counter = 1L;
+    public static long paramGroup_counter = 1L;
+
     @Autowired
     private SpecificationMapper specificationMapper;
+
+    @Autowired
+    private SpuDetailsService spuDetailsService;
 
     public Specification queryByCategoryId(Long cid) {
         Specification specification = this.specificationMapper.selectByPrimaryKey(cid);
         return specification;
+    }
+
+    /**
+     * 根据spuId，查询所有该Spu的规格参数;
+     * @param spuId
+     * @return
+     */
+    public List<Param> queryParamsBySpuId(Long spuId) {
+
+        SpuDetails spuDetails = spuDetailsService.queryBySpuId(spuId);
+        String specifications = spuDetails.getSpecifications();
+
+        List<Param> all_params = new ArrayList<>();
+
+        //反序列化
+        List<ParamGroup> paramGroups = null;
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            paramGroups = mapper.readValue(specifications, new TypeReference<List<ParamGroup>>() {
+            });
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
+        if(!CollectionUtils.isEmpty(paramGroups)) {
+            paramGroups.forEach( paramGroup -> {
+                paramGroup.setId(paramGroup_counter++);
+                paramGroup.setSpuId(spuId);
+                paramGroup.getParams().forEach( param -> {param.setGroupId(paramGroup.getId());param.setId(param_counter++);});
+                all_params.addAll(paramGroup.getParams());
+            });
+        }
+
+        return all_params;
+    }
+
+
+    public List<Param> querySpecialParamsBySpuId(Long spuId) {
+        return queryParamsBySpuId(spuId).stream().filter(param -> !param.isGlobal()).collect(Collectors.toList());
+    }
+
+
+    public List<Param> queryGenericParamsBySpuId(Long spuId) {
+        return queryParamsBySpuId(spuId).stream().filter(param -> param.isGlobal()).collect(Collectors.toList());
     }
 
 

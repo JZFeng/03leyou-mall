@@ -18,8 +18,10 @@ public class SpecificationController {
     @Autowired
     private SpecificationService specificationService;
 
+    @Deprecated
     @GetMapping({"groups/{cid}", "{cid}", "" })
-    public ResponseEntity<String> querySpecificationByCategoryId(@PathVariable("cid") Long cid) {
+    //这个group有什么用？
+    public ResponseEntity<String> querySpecificationByGroup(@PathVariable("cid") Long cid) {
         Specification spec = this.specificationService.queryByCategoryId(cid);
         if(spec == null) {
             return ResponseEntity.notFound().build();
@@ -28,11 +30,14 @@ public class SpecificationController {
     }
 
     @GetMapping("params")
-    public ResponseEntity<String> querySpecificationByCategoryId1(@RequestParam("cid") Long cid) {
+    public ResponseEntity<String> querySpecificationByCategoryId(@RequestParam("cid") Long cid) {
         Specification spec = this.specificationService.queryByCategoryId(cid);
         if(spec == null) {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(spec.getSpecifications());
     }
+
+
+
 }

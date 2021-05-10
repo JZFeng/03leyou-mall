@@ -19,7 +19,6 @@ public interface GoodsApi {
             @RequestParam(name = "saleable", required = false ) Boolean saleable
     );
 
-
     @GetMapping("sku/list")
     public List<Sku> querySkuBySpuId(@RequestParam(name = "id") Long id);
 
