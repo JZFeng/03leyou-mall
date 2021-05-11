@@ -9,6 +9,8 @@ spring:
     rest:
       uris:
         - http://jz-ubuntu:9200
+  jackson:
+    default-property-inclusion: non_null # 配置json处理时忽略空值
 eureka:
   client:
     service-url:

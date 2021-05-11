@@ -47,25 +47,17 @@ public class IndexService {
         Brand brand = this.brandClient.queryBrandById(spu.getBrandId());
         String all = spu.getTitle() + " " + StringUtils.join(categoryNames, " ") + " " + brand.getName();
 
-        List<Sku> skus = this.goodsClient.querySkuBySpuId(spu.getId());
+        //准备skus
+        List<Sku> skus = this.goodsClient.querySkuBySpuId(spu.getId()).stream().map(sku -> {
+            return Sku.builder().id(sku.getId()).title(sku.getTitle()).price(sku.getPrice()).images(StringUtils.isBlank(sku.getImages()) ? "" : StringUtils.split(sku.getImages(), ",")[0]).build();
+        }).collect(Collectors.toList());
 
         //准备price列表
         List<Long> price = skus.stream().map(sku -> sku.getPrice()).collect(Collectors.toList());
 
-        //准备skus
-        List<Map<String, Object>> skuList = new ArrayList<>();
-        skus.forEach(sku -> {
-            Map<String, Object> skuMap = new HashMap<>();
-            skuMap.put("id", sku.getId());
-            skuMap.put("title", sku.getTitle());
-            skuMap.put("price", sku.getPrice());
-            skuMap.put("image", StringUtils.isBlank(sku.getImages()) ? "" : StringUtils.split(sku.getImages(), ",")[0]);
-            skuList.add(skuMap);
-        });
-
         //准备specs
         List<Param> params = specificationClient.queryParamsBySpuId(spu.getId());
-        if(!CollectionUtils.isEmpty(params)) {
+        if (!CollectionUtils.isEmpty(params)) {
             Map<String, Object> param_map = new HashMap<>(); //最后存到specs字段中
             params.forEach(param -> {
                 String k = param.getK();
@@ -90,7 +82,7 @@ public class IndexService {
                         .createdTime(spu.getCreateTime())
                         .price(price)
                         //TO-DO: BUG FIX;
-//                        .skus(objectMapper.writeValueAsString(skuList))
+                        .skus(skus)
                         .specs(param_map)
                         .build();
             } catch (Exception e) {

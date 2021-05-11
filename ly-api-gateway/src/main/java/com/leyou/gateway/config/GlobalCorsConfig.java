@@ -18,6 +18,7 @@ public class GlobalCorsConfig {
     @Bean
     public CorsFilter getCorsFilter() {
         CorsConfiguration config = new CorsConfiguration();
+        config.addAllowedOrigin("http://www.leyou.com");
         config.addAllowedOrigin("http://manage.leyou.com");
         config.setAllowCredentials(true);
         config.addAllowedMethod(HttpMethod.OPTIONS);

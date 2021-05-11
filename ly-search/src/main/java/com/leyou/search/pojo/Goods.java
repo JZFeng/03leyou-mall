@@ -5,6 +5,7 @@
 
 package com.leyou.search.pojo;
 
+import com.leyou.item.pojo.Sku;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
@@ -42,8 +43,8 @@ public class Goods {
 
     private List<Long> price;
 
-    @Field(type = FieldType.Keyword, index = false)
-    private String skus;
+
+    private List<Sku> skus;
 
     private Map<String, Object> specs;
 

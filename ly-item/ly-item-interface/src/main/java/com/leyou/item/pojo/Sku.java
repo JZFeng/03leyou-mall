@@ -5,9 +5,7 @@
 
 package com.leyou.item.pojo;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -16,6 +14,8 @@ import java.util.Date;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
+@ToString
 public class Sku {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

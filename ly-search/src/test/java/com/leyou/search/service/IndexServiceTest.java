@@ -43,6 +43,7 @@ public class IndexServiceTest {
 
     @Test
     public void testBuildGoods() {
+
         Long spuId = 243L;
         Spu spu = goodsClient.querySpuBySpuId(spuId);
         Goods goods = indexService.buildGoods(spu);
@@ -76,7 +77,7 @@ public class IndexServiceTest {
             this.goodsRepository.saveAll(goodsList);
             page++;
 
-        } while (size == 30);
+        } while (size == 30); //最后一页就停了。
 
     }
 
