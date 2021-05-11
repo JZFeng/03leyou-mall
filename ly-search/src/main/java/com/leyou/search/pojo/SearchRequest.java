@@ -19,8 +19,8 @@ public class SearchRequest {
     private static final Integer DEFAULT_PAGE = 1;
 
     private String key = ""; //需要给缺省值
-    private Integer page = DEFAULT_PAGE;
-    private Integer size = DEFAULT_SIZE;
+    private Integer page;
+    private Integer size;
     private String sortBy = "";
     private Boolean descending = false;
     private Map<String, String> filter;
@@ -34,6 +34,9 @@ public class SearchRequest {
     }
 
     public Integer getSize() {
-        return DEFAULT_SIZE;
+        if(size == null) {
+            size = DEFAULT_SIZE;
+        }
+        return Math.min(100, size);
     }
 }
