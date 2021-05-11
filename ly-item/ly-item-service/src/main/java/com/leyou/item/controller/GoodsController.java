@@ -8,6 +8,7 @@ package com.leyou.item.controller;
 import com.leyou.common.pojo.PageResult;
 import com.leyou.item.pojo.Sku;
 import com.leyou.item.bo.SpuBo;
+import com.leyou.item.pojo.Spu;
 import com.leyou.item.pojo.SpuDetails;
 import com.leyou.item.service.GoodsService;
 import com.leyou.item.service.SkuService;
@@ -47,6 +48,27 @@ public class GoodsController {
         return ResponseEntity.ok(result);
     }
 
+    @GetMapping("spu/detail/{spuId}")
+    public ResponseEntity<SpuDetails> querySpuDetailsBySpuId(@PathVariable(name = "spuId") Long spuId) {
+        SpuDetails spuDetails = this.spuDetailsService.queryBySpuId(spuId);
+        if(spuDetails == null ) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(spuDetails);
+    }
+
+    @GetMapping("spu/{spuId}")
+    public ResponseEntity<Spu> querySpuBySpuId(@PathVariable(name = "spuId") Long spuId) {
+        Spu spu = this.goodsService.querySpuBySpuId(spuId);
+        if(spu  == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(spu);
+    }
+
+
     @GetMapping("sku/list")
     public ResponseEntity<List<Sku>> querySkuBySpuId(@RequestParam(name = "id") Long id) {
         List<Sku> skus = this.skuService.queryBySpuId(id);
@@ -56,6 +78,7 @@ public class GoodsController {
 
         return ResponseEntity.ok(skus);
     }
+
 
 
     @PostMapping("goods")
@@ -80,14 +103,6 @@ public class GoodsController {
         }
     }
 
-    @GetMapping("spu/detail/{spuId}")
-    public ResponseEntity<SpuDetails> querySpuDetailsBySpuId(@PathVariable(name = "spuId") Long spuId) {
-        SpuDetails spuDetails = this.spuDetailsService.queryBySpuId(spuId);
-        if(spuDetails == null ) {
-            return ResponseEntity.notFound().build();
-        }
 
-        return ResponseEntity.ok(spuDetails);
-    }
 
 }

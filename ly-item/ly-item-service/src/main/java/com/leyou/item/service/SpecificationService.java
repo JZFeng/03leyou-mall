@@ -13,6 +13,7 @@ import com.leyou.item.pojo.Param;
 import com.leyou.item.pojo.ParamGroup;
 import com.leyou.item.pojo.Specification;
 import com.leyou.item.pojo.SpuDetails;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -47,11 +48,14 @@ public class SpecificationService {
 
         SpuDetails spuDetails = spuDetailsService.queryBySpuId(spuId);
         String specifications = spuDetails.getSpecifications();
-
         List<Param> all_params = new ArrayList<>();
+        if(StringUtils.isEmpty(specifications)) {
+            return all_params;
+        }
 
         //反序列化
         List<ParamGroup> paramGroups = null;
+
         ObjectMapper mapper = new ObjectMapper();
         try {
             paramGroups = mapper.readValue(specifications, new TypeReference<List<ParamGroup>>() {

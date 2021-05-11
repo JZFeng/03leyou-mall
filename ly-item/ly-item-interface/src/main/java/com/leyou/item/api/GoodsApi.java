@@ -4,7 +4,9 @@ package com.leyou.item.api;
 import com.leyou.common.pojo.PageResult;
 import com.leyou.item.bo.SpuBo;
 import com.leyou.item.pojo.Sku;
+import com.leyou.item.pojo.Spu;
 import com.leyou.item.pojo.SpuDetails;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,6 +21,12 @@ public interface GoodsApi {
             @RequestParam(name = "saleable", required = false ) Boolean saleable
     );
 
+    @GetMapping("spu/detail/{spuId}")
+    public SpuDetails querySpuDetailsBySpuId(@PathVariable(name = "spuId") Long spuId);
+
+    @GetMapping("spu/{spuId}")
+    public Spu querySpuBySpuId(@PathVariable(name = "spuId") Long spuId);
+
     @GetMapping("sku/list")
     public List<Sku> querySkuBySpuId(@RequestParam(name = "id") Long id);
 
@@ -28,7 +36,5 @@ public interface GoodsApi {
     @PutMapping("goods")
     public void updateGoods(@RequestBody SpuBo spu);
 
-    @GetMapping("spu/detail/{spuId}")
-    public SpuDetails querySpuDetailsBySpuId(@PathVariable(name = "spuId") Long spuId);
 
 }
