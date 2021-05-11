@@ -43,26 +43,24 @@ public class IndexService {
         ObjectMapper objectMapper = new ObjectMapper();
 
         //准备all
-        List<String> categoryNames = categoryClient.queryNameByIds(Arrays.asList(spu.getCid1(), spu.getCid2(), spu.getCid3()));
-        Brand brand = brandClient.queryBrandById(spu.getBrandId());
+        List<String> categoryNames = this.categoryClient.queryNameByIds(Arrays.asList(spu.getCid1(), spu.getCid2(), spu.getCid3()));
+        Brand brand = this.brandClient.queryBrandById(spu.getBrandId());
         String all = spu.getTitle() + " " + StringUtils.join(categoryNames, " ") + " " + brand.getName();
 
-        List<Sku> skus = goodsClient.querySkuBySpuId(spu.getId());
+        List<Sku> skus = this.goodsClient.querySkuBySpuId(spu.getId());
 
         //准备price列表
         List<Long> price = skus.stream().map(sku -> sku.getPrice()).collect(Collectors.toList());
 
         //准备skus
-        List<Map<String, Object>> skuMap = new ArrayList<>();
+        List<Map<String, Object>> skuList = new ArrayList<>();
         skus.forEach(sku -> {
-            Map<String, Object> objectMap = new HashMap<>();
-            objectMap.put("id", sku.getId());
-            objectMap.put("price", sku.getPrice());
-            objectMap.put("title", sku.getTitle());
-            String image = StringUtils.isBlank(sku.getImages()) ? "" : StringUtils.split(sku.getImages(), ",")[0];
-            objectMap.put("image", image);
-
-            skuMap.add(objectMap);
+            Map<String, Object> skuMap = new HashMap<>();
+            skuMap.put("id", sku.getId());
+            skuMap.put("title", sku.getTitle());
+            skuMap.put("price", sku.getPrice());
+            skuMap.put("image", StringUtils.isBlank(sku.getImages()) ? "" : StringUtils.split(sku.getImages(), ",")[0]);
+            skuList.add(skuMap);
         });
 
         //准备specs
@@ -83,8 +81,6 @@ public class IndexService {
             });
 
             try {
-                String s = objectMapper.writeValueAsString(skuMap);
-
                 return Goods.builder()
                         .id(spu.getId())
                         .all(all)
@@ -93,7 +89,8 @@ public class IndexService {
                         .brandId(spu.getBrandId())
                         .createdTime(spu.getCreateTime())
                         .price(price)
-                        .skus(s)
+                        //TO-DO: BUG FIX;
+//                        .skus(objectMapper.writeValueAsString(skuList))
                         .specs(param_map)
                         .build();
             } catch (Exception e) {
