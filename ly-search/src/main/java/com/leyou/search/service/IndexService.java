@@ -67,35 +67,41 @@ public class IndexService {
 
         //准备specs
         List<Param> params = specificationClient.queryParamsBySpuId(spu.getId());
-        Map<String, Object> param_map = new HashMap<>(); //最后存到specs字段中
-        params.forEach(param -> {
-            String k = param.getK();
-            List<String> options = param.getOptions();
-            if (CollectionUtils.isEmpty(options)) {
-                //v有值，记得加单位
-                String v = param.getV() + (StringUtils.isBlank(param.getUnit()) ? "" : param.getUnit());
-                param_map.put(k, v);
-            } else {
-                //Option有值
-                param_map.put(k, options);
-            }
-        });
+        if(!CollectionUtils.isEmpty(params)) {
+            Map<String, Object> param_map = new HashMap<>(); //最后存到specs字段中
+            params.forEach(param -> {
+                String k = param.getK();
+                List<String> options = param.getOptions();
+                if (CollectionUtils.isEmpty(options)) {
+                    //v有值，记得加单位
+                    String v = param.getV() + (StringUtils.isBlank(param.getUnit()) ? "" : param.getUnit());
+                    param_map.put(k, v);
+                } else {
+                    //Option有值
+                    param_map.put(k, options);
+                }
+            });
 
-        try {
-            return Goods.builder()
-                    .all(all)
-                    .subTitle(spu.getSubTitle())
-                    .cid1(spu.getCid1()).cid2(spu.getCid2()).cid3(spu.getCid3())
-                    .brandId(spu.getBrandId())
-                    .createdTime(spu.getCreateTime())
-                    .price(price)
-                    .skus(objectMapper.writeValueAsString(skuMap))
-                    .specs(param_map)
-                    .build();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+            try {
+                String s = objectMapper.writeValueAsString(skuMap);
+
+                return Goods.builder()
+                        .id(spu.getId())
+                        .all(all)
+                        .subTitle(spu.getSubTitle())
+                        .cid1(spu.getCid1()).cid2(spu.getCid2()).cid3(spu.getCid3())
+                        .brandId(spu.getBrandId())
+                        .createdTime(spu.getCreateTime())
+                        .price(price)
+                        .skus(s)
+                        .specs(param_map)
+                        .build();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
+        return null;
     }
+
 }

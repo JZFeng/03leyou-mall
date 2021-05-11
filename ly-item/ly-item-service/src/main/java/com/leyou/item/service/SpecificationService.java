@@ -61,6 +61,7 @@ public class SpecificationService {
             paramGroups = mapper.readValue(specifications, new TypeReference<List<ParamGroup>>() {
             });
         } catch (JsonProcessingException e) {
+            System.out.println("******出错的ID为：" + spuId);
             e.printStackTrace();
         }
 
