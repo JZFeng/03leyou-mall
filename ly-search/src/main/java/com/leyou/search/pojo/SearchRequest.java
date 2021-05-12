@@ -6,6 +6,7 @@
 package com.leyou.search.pojo;
 
 import lombok.*;
+import org.apache.commons.lang.StringUtils;
 
 import java.util.Map;
 
@@ -21,7 +22,7 @@ public class SearchRequest {
     private String key = ""; //需要给缺省值
     private Integer page;
     private Integer size;
-    private String sortBy = "";
+    private String sortBy;
     private Boolean descending = false;
     private Map<String, String> filter;
 
@@ -34,9 +35,18 @@ public class SearchRequest {
     }
 
     public Integer getSize() {
-        if(size == null) {
+        if(size == null || size < 1) {
             size = DEFAULT_SIZE;
         }
         return Math.min(100, size);
     }
+
+    public String getSortBy() {
+        if(StringUtils.isBlank(sortBy)) {
+            sortBy = "id";
+        }
+
+        return sortBy;
+    }
+
 }

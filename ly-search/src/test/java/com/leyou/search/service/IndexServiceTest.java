@@ -64,7 +64,7 @@ public class IndexServiceTest {
 
         //分页查询，创建Goods记录
         int page = 1;
-        int rows = 30;
+        int rows = 20;
         int size = 0;
 
         do {
@@ -77,7 +77,7 @@ public class IndexServiceTest {
             this.goodsRepository.saveAll(goodsList);
             page++;
 
-        } while (size == 30); //最后一页就停了。
+        } while (size == 20); //最后一页就停了。
 
     }
 

@@ -20,6 +20,7 @@ public class SearchController {
     @Autowired
     private SearchService searchService;
 
+    @CrossOrigin
     @PostMapping("page")
     public ResponseEntity<PageResult<Goods>> search(@RequestBody SearchRequest request) {
         PageResult<Goods>  result = this.searchService.search(request);

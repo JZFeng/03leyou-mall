@@ -43,7 +43,6 @@ public class Goods {
 
     private List<Long> price;
 
-
     private List<Sku> skus;
 
     private Map<String, Object> specs;

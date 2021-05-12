@@ -81,7 +81,6 @@ public class IndexService {
                         .brandId(spu.getBrandId())
                         .createdTime(spu.getCreateTime())
                         .price(price)
-                        //TO-DO: BUG FIX;
                         .skus(skus)
                         .specs(param_map)
                         .build();
