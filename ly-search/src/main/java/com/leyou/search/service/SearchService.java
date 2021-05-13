@@ -5,18 +5,23 @@
 
 package com.leyou.search.service;
 
-import com.leyou.common.pojo.PageResult;
+import com.leyou.item.pojo.Brand;
+import com.leyou.item.pojo.Category;
 import com.leyou.search.GoodsRepository;
+import com.leyou.search.client.BrandClient;
+import com.leyou.search.client.CategoryClient;
 import com.leyou.search.pojo.Goods;
 import com.leyou.search.pojo.SearchRequest;
+import com.leyou.search.pojo.SearchResult;
 import org.apache.commons.lang.StringUtils;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.elasticsearch.core.*;
 import org.springframework.data.elasticsearch.core.query.FetchSourceFilter;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
@@ -34,7 +39,13 @@ public class SearchService {
     @Autowired
     private ElasticsearchRestTemplate elasticsearchRestTemplate;
 
-    public PageResult<Goods> search(SearchRequest request) {
+    @Autowired
+    private BrandClient brandClient;
+
+    @Autowired
+    private CategoryClient categoryClient;
+
+    public SearchResult search(SearchRequest request) {
         String key = request.getKey();
         if(StringUtils.isBlank(key)) {
             return null;
@@ -49,20 +60,37 @@ public class SearchService {
         //PageRequest pageRequest = PageRequest.of(request.getPage() - 1, request.getSize(), Sort.by(request.getDescending() ? Sort.Direction.DESC : Sort.Direction.ASC, StringUtils.isBlank(request.getSortBy()) ? "id" : request.getSortBy()));
         String sortBy = request.getSortBy();
         Boolean descending = request.getDescending();
-        builder.withSort( SortBuilders.fieldSort( StringUtils.isBlank(sortBy) ?  "id" : sortBy ).order( descending ? SortOrder.DESC : SortOrder.ASC ) );
 
+        builder.withSort( SortBuilders.fieldSort( StringUtils.isBlank(sortBy) ?  "id" : sortBy ).order( descending ? SortOrder.DESC : SortOrder.ASC ) );
         builder.withPageable(pageRequest);
         builder.withQuery(QueryBuilders.matchQuery("all", key).operator(Operator.AND));
         builder.withSourceFilter(new FetchSourceFilter(new String[]{"id","skus","subTitle","image", "createdTime","price"}, null));
 
+        //聚合
+        builder.addAggregation(AggregationBuilders.terms("brands").field("brandId"));
+        builder.addAggregation(AggregationBuilders.terms("categories").field("cid3"));
+
         SearchHits<Goods> searchHits = this.elasticsearchRestTemplate.search(builder.build(), Goods.class);
         SearchPage<Goods> searchPage = SearchHitSupport.searchPageFor(searchHits, pageRequest);  //convert searchHits to a SearchPage
 
+        //取出List<Goods>
         List<Goods> goodsList = searchPage.getContent().stream().map(goodsSearchHit -> {
             return goodsSearchHit.getContent();
         }).collect(Collectors.toList());
 
-        return new PageResult<Goods>(searchPage.getTotalElements(), (long)searchPage.getTotalPages(), goodsList );
+        //处理Aggregation
+        Terms agg_brands = (Terms)searchHits.getAggregations().get("brands");
+        List<Long> brandIds = agg_brands.getBuckets().stream().map(bucket -> {
+            return bucket.getKeyAsNumber().longValue();
+        }).collect(Collectors.toList());
+        List<Brand> brands = this.brandClient.queryBrandByIds(brandIds);
 
+        Terms agg_categories = (Terms)searchHits.getAggregations().get("categories");
+        List<Long> categoryIds = agg_categories.getBuckets().stream().map(bucket -> {
+            return bucket.getKeyAsNumber().longValue();
+        }).collect(Collectors.toList());
+        List<Category> categories = this.categoryClient.queryCategoryByIds(categoryIds);
+
+        return new SearchResult(searchPage.getTotalElements(), (long)searchPage.getTotalPages(), goodsList, brands, categories,null);
     }
 }

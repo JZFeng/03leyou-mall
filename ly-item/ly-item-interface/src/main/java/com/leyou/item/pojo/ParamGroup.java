@@ -5,7 +5,6 @@
 
 package com.leyou.item.pojo;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import java.util.List;

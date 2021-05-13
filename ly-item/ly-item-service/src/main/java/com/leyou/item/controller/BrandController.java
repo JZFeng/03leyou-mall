@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -63,5 +64,14 @@ public class BrandController {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(brand);
+    }
+
+    @GetMapping("list")
+    public ResponseEntity<List<Brand>> queryBrandByIds(@RequestParam(name = "ids") List<Long> ids) {
+        List<Brand> brands = this.brandService.queryBrandByIds(ids);
+        if(CollectionUtils.isEmpty(brands)) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(brands);
     }
 }

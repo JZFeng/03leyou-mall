@@ -7,6 +7,7 @@ import com.leyou.item.pojo.Spu;
 import com.leyou.search.GoodsRepository;
 import com.leyou.search.client.GoodsClient;
 import com.leyou.search.pojo.Goods;
+import com.leyou.search.pojo.SearchResult;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

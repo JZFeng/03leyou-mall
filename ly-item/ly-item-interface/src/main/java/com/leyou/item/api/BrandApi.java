@@ -27,4 +27,8 @@ public interface BrandApi {
     @GetMapping("{id}")
     public Brand queryBrandById(@PathVariable(name = "id") Long id);
 
+
+    @GetMapping("list")
+    public List<Brand> queryBrandByIds(@RequestParam(name = "ids") List<Long> ids);
+
 }
