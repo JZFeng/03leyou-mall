@@ -11,6 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = LyItemService.class)
@@ -156,12 +157,33 @@ class SpecificationServiceTest {
 
 
     @Test
-    public void testGetParams() throws JsonProcessingException {
+    public void testQuerySpecsBySpuId() throws JsonProcessingException {
         Long spuId = 243l;
-        List<Param> all_params = specificationService.queryParamsBySpuId(spuId);
-        specificationService.querySpecialParamsBySpuId(spuId).forEach(System.out::println);
-        System.out.println("-----------------");
-        specificationService.queryGenericParamsBySpuId(spuId).forEach(System.out::println);
+        List<Param> specs = specificationService.querySpecsBySpuId(spuId);
+        System.out.println("------所有规格-----------");
+        specs.forEach(System.out::println);
+
+        System.out.println("------通用规格-------");
+        List<Param> genericSpecs = specs.stream().filter(param -> param.isGlobal()).collect(Collectors.toList());
+        genericSpecs.forEach(System.out::println);
+        System.out.println("------特殊规格-------");
+        List<Param> specialSpecs = specs.stream().filter(param -> !param.isGlobal()).collect(Collectors.toList());
+        specialSpecs.forEach(System.out::println);
+    }
+
+    @Test
+    public void testQuerySpecsByCid() throws JsonProcessingException {
+        Long cid = 76L;
+        List<Param> specs = specificationService.querySpecsByCid(cid);
+        System.out.println("------所有规格-----------");
+        specs.forEach(System.out::println);
+
+        System.out.println("------通用规格-------");
+        List<Param> genericSpecs = specs.stream().filter(param -> param.isGlobal()).collect(Collectors.toList());
+        genericSpecs.forEach(System.out::println);
+        System.out.println("------特殊规格-------");
+        List<Param> specialSpecs = specs.stream().filter(param -> !param.isGlobal()).collect(Collectors.toList());
+        specialSpecs.forEach(System.out::println);
     }
 
 }

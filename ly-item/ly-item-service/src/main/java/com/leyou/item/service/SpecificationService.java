@@ -42,15 +42,34 @@ public class SpecificationService {
     /**
      * 根据spuId，查询所有该Spu的规格参数;
      * @param spuId
-     * @return
+     * @return 因为是具体Spu，所以返回值中有具体的规格参数值
+     *
+     * 数据示范：
+     * "specs": {"分辨率":"其他","品牌":"小米（MI）","CPU核数":"八核","后置摄像头":"1200万","机身重量（g）":"165g","型号":"5x","上市年份":"2017.0年","电池容量（mAh）":"3000mAh","机身存储":["64GB"],"机身颜色":["香槟金","黑色","红色","玫瑰金"],"CPU品牌":"骁龙（Snapdragon)","CPU型号":"骁龙625（MSM8953）","机身材质工艺":"null","CPU频率":"1.4GHz","操作系统":"Android","内存":["4GB"],"主屏幕尺寸（英寸）":"5.5英寸","前置摄像头":"500.0万"}
+     * "specifications": [{"group":"主体","params":[{"k":"品牌","searchable":false,"global":true,"options":[]},{"k":"型号","searchable":false,"global":true,"options":[]},{"k":"上市年份","searchable":false,"global":true,"options":[],"numerical":true,"unit":"年"}]},{"group":"基本信息","params":[{"k":"机身颜色","searchable":false,"global":false,"options":[]},{"k":"机身重量（g）","searchable":false,"global":true,"options":[],"numerical":true,"unit":"g"},{"k":"机身材质工艺","searchable":false,"global":true,"options":[]}]},{"group":"操作系统","params":[{"k":"操作系统","searchable":true,"global":true,"options":["Android","IOS","Windows","功能机"]}]},{"group":"主芯片","params":[{"k":"CPU品牌","searchable":true,"global":true,"options":["骁龙（Snapdragon)","麒麟"]},{"k":"CPU型号","searchable":false,"global":true,"options":[]},{"k":"CPU核数","searchable":true,"global":true,"options":["一核","二核","四核","六核","八核","十核"]},{"k":"CPU频率","searchable":true,"global":true,"options":[],"numerical":true,"unit":"GHz"}]},{"group":"存储","params":[{"k":"内存","searchable":true,"global":false,"options":["1GB及以下","2GB","3GB","4GB","6GB","8GB"],"numerical":false,"unit":""},{"k":"机身存储","searchable":true,"global":false,"options":["8GB及以下","16GB","32GB","64GB","128GB","256GB"],"numerical":false,"unit":""}]},{"group":"屏幕","params":[{"k":"主屏幕尺寸（英寸）","searchable":true,"global":true,"options":[],"numerical":true,"unit":"英寸"},{"k":"分辨率","searchable":false,"global":true,"options":[]}]},{"group":"摄像头","params":[{"k":"前置摄像头","searchable":true,"global":true,"options":[],"numerical":true,"unit":"万"},{"k":"后置摄像头","searchable":true,"global":true,"options":[],"numerical":true,"unit":"万"}]},{"group":"电池信息","params":[{"k":"电池容量（mAh）","searchable":true,"global":true,"options":[],"numerical":true,"unit":"mAh"}]}]
      */
-    public List<Param> queryParamsBySpuId(Long spuId) {
+    public List<Param> querySpecsBySpuId(Long spuId) {
+        String specifications = this.spuDetailsService.queryBySpuId(spuId).getSpecifications();
+        List<Param> specsBySpuId = getSpecsBySpecificationString(specifications, spuId);
 
-        SpuDetails spuDetails = spuDetailsService.queryBySpuId(spuId);
-        String specifications = spuDetails.getSpecifications();
-        List<Param> all_params = new ArrayList<>();
+        return specsBySpuId;
+    }
+
+    /**
+     *
+     * @param cid
+     * @return 返回值中，只有规格参数名，没有具体的值；
+     */
+    public List<Param> querySpecsByCid(Long cid) {
+        String specifications = this.queryByCategoryId(cid).getSpecifications();
+        List<Param> specsByCid = getSpecsBySpecificationString(specifications);
+        return specsByCid;
+    }
+
+    private List<Param> getSpecsBySpecificationString(String specifications, Long spuId) {
+        List<Param> specs = new ArrayList<>();
         if(StringUtils.isEmpty(specifications)) {
-            return all_params;
+            return specs;
         }
 
         //反序列化
@@ -70,22 +89,20 @@ public class SpecificationService {
                 paramGroup.setId(paramGroup_counter++);
                 paramGroup.setSpuId(spuId);
                 paramGroup.getParams().forEach( param -> {param.setGroupId(paramGroup.getId());param.setId(param_counter++);});
-                all_params.addAll(paramGroup.getParams());
+                specs.addAll(paramGroup.getParams());
             });
         }
 
-        return all_params;
+        List<Param> genericSpecs = specs.stream().filter(param -> param.isGlobal()).collect(Collectors.toList());
+        List<Param> specialSpecs = specs.stream().filter(param -> !param.isGlobal()).collect(Collectors.toList());
+
+        return specs;
     }
 
-
-    public List<Param> querySpecialParamsBySpuId(Long spuId) {
-        return queryParamsBySpuId(spuId).stream().filter(param -> !param.isGlobal()).collect(Collectors.toList());
+    private List<Param> getSpecsBySpecificationString(String specifications) {
+        return  this.getSpecsBySpecificationString(specifications, null);
     }
 
-
-    public List<Param> queryGenericParamsBySpuId(Long spuId) {
-        return queryParamsBySpuId(spuId).stream().filter(param -> param.isGlobal()).collect(Collectors.toList());
-    }
 
 
     public static List<String> mergeParams(List<List<String>> params) {

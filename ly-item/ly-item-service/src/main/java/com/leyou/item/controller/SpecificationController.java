@@ -44,7 +44,7 @@ public class SpecificationController {
 
     @GetMapping("{spuId}")
     public ResponseEntity<List<Param>> queryParamsBySpuId(@PathVariable( name = "spuId") Long spuId) {
-        List<Param> params = this.specificationService.queryParamsBySpuId(spuId);
+        List<Param> params = this.specificationService.querySpecsBySpuId(spuId);
         if(CollectionUtils.isEmpty(params)) {
             return ResponseEntity.notFound().build();
         }
