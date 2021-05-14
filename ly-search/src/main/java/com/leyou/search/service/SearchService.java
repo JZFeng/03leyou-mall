@@ -5,12 +5,14 @@
 
 package com.leyou.search.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.leyou.item.pojo.Brand;
 import com.leyou.item.pojo.Category;
 import com.leyou.item.pojo.Param;
 import com.leyou.search.GoodsRepository;
 import com.leyou.search.client.BrandClient;
 import com.leyou.search.client.CategoryClient;
+import com.leyou.search.client.GoodsClient;
 import com.leyou.search.client.SpecificationClient;
 import com.leyou.search.pojo.Goods;
 import com.leyou.search.pojo.SearchRequest;
@@ -35,15 +37,27 @@ import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilde
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static com.leyou.search.utils.SearchUtils.generateSpecsFromParamList;
 
 @Service
 public class SearchService {
+
+    @Autowired
+    private BrandClient brandClient;
+
+    @Autowired
+    private GoodsClient goodsClient;
+
+    @Autowired
+    private CategoryClient categoryClient;
+
+    @Autowired
+    private SpecificationClient specificationClient;
 
     @Autowired
     private GoodsRepository goodsRepository;
@@ -51,14 +65,7 @@ public class SearchService {
     @Autowired
     private ElasticsearchRestTemplate elasticsearchRestTemplate;
 
-    @Autowired
-    private BrandClient brandClient;
-
-    @Autowired
-    private CategoryClient categoryClient;
-
-    @Autowired
-    private SpecificationClient specificationClient;
+    private static ObjectMapper objectMapper = new ObjectMapper();
 
     public SearchResult search(SearchRequest request) {
         String key = request.getKey();
@@ -68,11 +75,14 @@ public class SearchService {
 
         NativeSearchQueryBuilder queryBuilder = new NativeSearchQueryBuilder();
 
+        //添加基本查询和条件过滤
+        QueryBuilder query = this.buildBasicQueryWithFilters(request);
+        queryBuilder.withQuery(query);
+
         //分页
         PageRequest pageRequest = PageRequest.of(request.getPage() - 1, request.getSize());
 
-        //排序。其实之前的那个实现也行。
-        //PageRequest pageRequest = PageRequest.of(request.getPage() - 1, request.getSize(), Sort.by(request.getDescending() ? Sort.Direction.DESC : Sort.Direction.ASC, StringUtils.isBlank(request.getSortBy()) ? "id" : request.getSortBy()));
+        //排序。
         String sortBy = request.getSortBy();
         Boolean descending = request.getDescending();
 
@@ -80,11 +90,7 @@ public class SearchService {
         queryBuilder.withPageable(pageRequest);
         queryBuilder.withSourceFilter(new FetchSourceFilter(new String[]{"id","skus","subTitle","image", "specs" /*, "createdTime","price" */}, null));
 
-        //条件过滤
-        QueryBuilder query = this.buildBasicQueryWithFilters(request);
-        queryBuilder.withQuery(query);
-
-        //聚合
+        //添加聚合
         queryBuilder.addAggregation(AggregationBuilders.terms("brands").field("brandId"));
         queryBuilder.addAggregation(AggregationBuilders.terms("categories").field("cid3"));
 
@@ -96,19 +102,66 @@ public class SearchService {
             return searchHit.getContent();
         }).collect(Collectors.toList());
 
-
-                //-- 处理Aggregation
+                //-- 处理Aggregation得到品牌和分类列表
         List<Brand> brands = getBrandAggregationResult((Terms)searchHits.getAggregations().get("brands"));
         List<Category> categories = getCategoryAggregationResult((Terms)searchHits.getAggregations().get("categories"));
 
+        //如果分类只有一个，则要进行第二次搜索，聚合并获取specs信息;
+        // {"size":1,"query":{"bool":{"must":[{"match":{"all":"手机"}}],"filter":[{"term":{"specs.CPU核数.keyword":"八核"}}]}},"aggs":{"CPU核数":{"terms":{"size":200,"field":"specs.CPU核数.keyword"}},"主屏幕尺寸（英寸）":{"terms":{"size":200,"field":"specs.主屏幕尺寸（英寸）.keyword"}},"分辨率":{"terms":{"size":200,"field":"specs.分辨率.keyword"}},"CPU品牌":{"terms":{"size":200,"field":"specs.CPU品牌.keyword"}},"机身颜色":{"terms":{"size":200,"field":"specs.机身颜色.keyword"}}}}
+        //需要对聚合结果集中，key为空进行处理
         Map<String,Object> specs = new HashMap<>();
-        if(categories.size() == 1 ) {
-            List<Param> params = this.specificationClient.querySpecsByCid(categories.get(0).getId());
-            specs = generateSpecsFromParamList(params);
+        if(!CollectionUtils.isEmpty(categories) && categories.size() == 1) {
+            specs = getAggregatedSpecsForCategory(  query, categories.get(0).getId() );
         }
 
         return new SearchResult(searchPage.getTotalElements(), (long)searchPage.getTotalPages(), goodsList, brands, categories,specs);
 
+    }
+
+    /**
+     *
+     * @param query  本次search的query对象
+     * @param cid  进行二次es search需要的categoryId
+     * @return 返回可供用户过滤的specs
+     */
+    private Map<String, Object> getAggregatedSpecsForCategory(QueryBuilder query, Long cid) {
+
+        Map<String, Object> specs = new HashMap<>();
+
+        NativeSearchQueryBuilder queryBuilder = new NativeSearchQueryBuilder();
+        queryBuilder.withQuery(query);
+        queryBuilder.withSourceFilter(new FetchSourceFilter(new String[]{},null)); //不需要Items，只需要聚合结果集
+
+        //根据cid拿到params，注意，这个param里只有k，没有v和options的值。我们需要通过聚合的结果，去填值;
+        List<Param> params = this.specificationClient.querySpecsByCid(cid);
+        if(!CollectionUtils.isEmpty(params)) {
+            params.forEach(param -> {
+                if(param.isSearchable()) {
+                    String k = param.getK().trim();
+                    queryBuilder.addAggregation(AggregationBuilders.terms(k).field("specs." + k + ".keyword").size(500));
+                }
+            });
+        }
+
+        SearchHits<Goods> searchHits = elasticsearchRestTemplate.search(queryBuilder.build(), Goods.class);
+
+        //处理aggregation结果
+        searchHits.getAggregations().asList().stream()
+                .map( aggregation -> {return (Terms) aggregation; } )
+                .forEach( terms -> {
+                    List<String> strs = new ArrayList<>();
+                    terms.getBuckets().forEach(
+                            bucket -> {
+                                String key = bucket.getKeyAsString();
+                                if(!StringUtils.isBlank(key) && !key.equalsIgnoreCase("null")){
+                                    strs.add(key);
+                                }
+                            }
+                    );
+                    specs.put(terms.getName(), strs);
+                });
+
+        return specs;
     }
 
 
