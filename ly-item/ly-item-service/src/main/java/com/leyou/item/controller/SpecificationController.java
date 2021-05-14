@@ -22,10 +22,8 @@ public class SpecificationController {
     @Autowired
     private SpecificationService specificationService;
 
-    @Deprecated
-    @GetMapping({"groups/{cid}"})
-    //这个group有什么用？
-    public ResponseEntity<String> querySpecificationByGroup(@PathVariable("cid") Long cid) {
+    @GetMapping("{cid}")
+    public ResponseEntity<String> querySpecificationByCid(@PathVariable(name = "cid") Long cid) {
         Specification spec = this.specificationService.queryByCategoryId(cid);
         if(spec == null) {
             return ResponseEntity.notFound().build();
@@ -33,17 +31,11 @@ public class SpecificationController {
         return ResponseEntity.ok(spec.getSpecifications());
     }
 
-    @GetMapping("params")
-    public ResponseEntity<String> querySpecificationByCategoryId(@RequestParam("cid") Long cid) {
-        Specification spec = this.specificationService.queryByCategoryId(cid);
-        if(spec == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(spec.getSpecifications());
-    }
-
-    @GetMapping("{spuId}")
-    public ResponseEntity<List<Param>> queryParamsBySpuId(@PathVariable( name = "spuId") Long spuId) {
+    // Specs规格参数，指的是Map<String,String> = {"分辨率":"其他","品牌":"null","CPU核数":"八核","机身颜色":["黑色","蓝色"]}
+    // Param对象：{id=4, groupId=2, k=机身颜色, searchable=false, global=false, numerical=false, v=null, unit=null, options=[金, 粉, 灰, 银]}
+    // Specifications 是那个包含所有ParamGroupJson字符串
+    @GetMapping("spu/{spuId}")
+    public ResponseEntity<List<Param>> querySpecsBySpuId(@PathVariable( name = "spuId") Long spuId) {
         List<Param> params = this.specificationService.querySpecsBySpuId(spuId);
         if(CollectionUtils.isEmpty(params)) {
             return ResponseEntity.notFound().build();
@@ -51,5 +43,12 @@ public class SpecificationController {
         return ResponseEntity.ok(params);
     }
 
-
+    @GetMapping("cid/{cid}")
+    public ResponseEntity<List<Param>> querySpecsByCid(@PathVariable( name = "cid") Long cid) {
+        List<Param> params = this.specificationService.querySpecsByCid(cid);
+        if(CollectionUtils.isEmpty(params)) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(params);
+    }
 }

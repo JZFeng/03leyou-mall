@@ -11,10 +11,13 @@ import java.util.List;
 @RequestMapping("spec")
 public interface SpecificationApi {
 
-    @GetMapping("params")
-    public String querySpecificationByCategoryId(@RequestParam("cid") Long cid);
+    @GetMapping("{cid}")
+    public String querySpecificationByCid(@PathVariable(name = "cid") Long cid);
 
-    @GetMapping("{spuId}")
-    public List<Param> queryParamsBySpuId(@PathVariable( name = "spuId") Long spuId);
+    @GetMapping("spu/{spuId}")
+    public List<Param> querySpecsBySpuId(@PathVariable( name = "spuId") Long spuId);
+
+    @GetMapping("cid/{cid}")
+    public List<Param> querySpecsByCid(@PathVariable( name = "cid") Long cid);
 
 }

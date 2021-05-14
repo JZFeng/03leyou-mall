@@ -44,7 +44,6 @@ public class IndexServiceTest {
 
     @Test
     public void testBuildGoods() {
-
         Long spuId = 243L;
         Spu spu = goodsClient.querySpuBySpuId(spuId);
         Goods goods = indexService.buildGoods(spu);
