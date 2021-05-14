@@ -8,10 +8,10 @@ package com.leyou.search.pojo;
 import com.leyou.common.pojo.PageResult;
 import com.leyou.item.pojo.Brand;
 import com.leyou.item.pojo.Category;
-import com.leyou.item.pojo.Param;
 import lombok.*;
 
 import java.util.List;
+import java.util.Map;
 
 
 @Data
@@ -21,7 +21,7 @@ import java.util.List;
 public class SearchResult extends PageResult<Goods> {
     private List<Brand> brands;
     private List<Category> categories;
-    private List<Param> params;
+    Map<String, Object> specs;
 
     public SearchResult(
             Long total,
@@ -29,12 +29,12 @@ public class SearchResult extends PageResult<Goods> {
             List<Goods> items,
             List<Brand> brands,
             List<Category> categories,
-            List<Param> params
+            Map<String, Object> specs
     ) {
         super(total,totalPage,items);
         this.brands = brands;
         this.categories = categories;
-        this.params = params;
+        this.specs = specs;
     }
 
 }

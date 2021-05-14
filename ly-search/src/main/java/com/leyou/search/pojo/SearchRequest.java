@@ -24,8 +24,7 @@ public class SearchRequest {
     private Integer size;
     private String sortBy;
     private Boolean descending = false;
-    private Map<String, String> filter;
-
+    private Map<String, String> filters;
 
     public Integer getPage(){
         if(page == null ) {
