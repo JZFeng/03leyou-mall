@@ -40,6 +40,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static com.leyou.search.utils.SearchUtils.generateSpecsFromParamList;
+
 @Service
 public class SearchService {
 
@@ -102,7 +104,7 @@ public class SearchService {
         Map<String,Object> specs = new HashMap<>();
         if(categories.size() == 1 ) {
             List<Param> params = this.specificationClient.querySpecsByCid(categories.get(0).getId());
-            specs = this.generateSpecsFromParamList(params);
+            specs = generateSpecsFromParamList(params);
         }
 
         return new SearchResult(searchPage.getTotalElements(), (long)searchPage.getTotalPages(), goodsList, brands, categories,specs);
@@ -204,25 +206,5 @@ public class SearchService {
         }
     }
 
-
-    private Map<String, Object> generateSpecsFromParamList(List<Param> params) {
-        Map<String, Object> param_map = new HashMap<>(); //最后存到specs字段中
-        if (!CollectionUtils.isEmpty(params)) {
-            params.forEach(param -> {
-                String k = param.getK();
-                List<String> options = param.getOptions();
-                if (CollectionUtils.isEmpty(options)) {
-                    //v有值，记得加单位
-                    String v = param.getV() + (org.springframework.util.StringUtils.isEmpty(param.getUnit()) ? "" : param.getUnit());
-                    param_map.put(k, v);
-                } else {
-                    //Option有值
-                    param_map.put(k, options);
-                }
-            });
-        }
-
-        return param_map;
-    }
 
 }
