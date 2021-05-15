@@ -76,4 +76,13 @@ public class CategoryController {
         return ResponseEntity.ok(categories);
     }
 
+    @GetMapping("all/level")
+    public ResponseEntity<List<Category>> queryAllByCid3( @RequestParam("cid3") Long cid3 ) {
+        List<Category> categories = this.categoryService.queryAllByCid3(cid3);
+        if(CollectionUtils.isEmpty(categories)) {
+           return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(categories);
+    }
+
 }

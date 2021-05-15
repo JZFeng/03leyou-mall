@@ -10,6 +10,7 @@ import com.leyou.item.pojo.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,4 +42,19 @@ public class CategoryService {
         List<Category> categories = this.categoryMapper.selectByIdList(ids);
         return categories;
     }
+
+    public List<Category> queryAllByCid3(Long cid3) {
+        List<Category> categories = new LinkedList<>();
+        Category category = this.categoryMapper.selectByPrimaryKey(cid3);
+        if(category != null) {
+            categories.add(0, category);
+            while(category.getParentId() != 0){
+                category = this.categoryMapper.selectByPrimaryKey(category.getParentId());
+                categories.add(0,category);
+            }
+        }
+
+        return categories;
+    }
+
 }
