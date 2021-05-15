@@ -19,5 +19,4 @@ public interface SpecificationApi {
 
     @GetMapping("cid/{cid}")
     public List<Param> querySpecsByCid(@PathVariable( name = "cid") Long cid);
-
 }
