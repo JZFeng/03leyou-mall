@@ -22,6 +22,8 @@ public class ParamGroup {
 
     private Long id;
 
+    private Long cid;
+
     private Long spuId;
 
     private String group;

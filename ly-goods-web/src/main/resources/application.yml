@@ -5,6 +5,8 @@ spring:
     name: goods-page
   thymeleaf:
     cache: false
+  main:
+    allow-bean-definition-overriding: true
 
 eureka:
   client:

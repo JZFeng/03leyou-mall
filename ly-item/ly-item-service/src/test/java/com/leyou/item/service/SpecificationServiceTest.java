@@ -26,6 +26,49 @@ class SpecificationServiceTest {
     @Autowired
     private SpuDetailsService spuDetailsService;
 
+
+    @Test
+    public void testQuerySpecsBySpuId() throws JsonProcessingException {
+        Long spuId = 243l;
+        List<Param> specs = specificationService.querySpecsBySpuId(spuId);
+        System.out.println("------所有规格-----------");
+        specs.forEach(System.out::println);
+        Assert.assertTrue(specs.size() == 18);
+
+        System.out.println("------通用规格-------");
+        List<Param> genericSpecs = specs.stream().filter(param -> param.isGlobal()).collect(Collectors.toList());
+        genericSpecs.forEach(System.out::println);
+        Assert.assertTrue(genericSpecs.size() == 15);
+        Assert.assertTrue(genericSpecs.get(0).getK().equalsIgnoreCase("品牌") && genericSpecs.get(0).getV().equalsIgnoreCase("OPPO"));
+
+        System.out.println("------特殊规格-------");
+        List<Param> specialSpecs = specs.stream().filter(param -> !param.isGlobal()).collect(Collectors.toList());
+        specialSpecs.forEach(System.out::println);
+        Assert.assertTrue(specialSpecs.size() == 3);
+        Assert.assertTrue(specialSpecs.get(0).getK().equalsIgnoreCase("机身颜色") && specialSpecs.get(0).getOptions().size() == 4);
+    }
+
+    @Test
+    public void testQuerySpecsByCid() throws JsonProcessingException {
+        Long cid = 76L;
+        List<Param> specs = specificationService.querySpecsByCid(cid);
+        System.out.println("------所有规格-----------");
+        specs.forEach(System.out::println);
+        Assert.assertTrue(specs.size() == 18);
+
+        System.out.println("------通用规格-------");
+        List<Param> genericSpecs = specs.stream().filter(param -> param.isGlobal()).collect(Collectors.toList());
+        genericSpecs.forEach(System.out::println);
+        Assert.assertTrue(genericSpecs.size() == 15);
+
+        System.out.println("------特殊规格-------");
+        List<Param> specialSpecs = specs.stream().filter(param -> !param.isGlobal()).collect(Collectors.toList());
+        specialSpecs.forEach(System.out::println);
+        Assert.assertTrue(specialSpecs.size() == 3);
+    }
+
+
+
     @Test
     void testJoin() {
         List<List<String>> specs = Arrays.asList(
@@ -156,34 +199,6 @@ class SpecificationServiceTest {
     }
 
 
-    @Test
-    public void testQuerySpecsBySpuId() throws JsonProcessingException {
-        Long spuId = 243l;
-        List<Param> specs = specificationService.querySpecsBySpuId(spuId);
-        System.out.println("------所有规格-----------");
-        specs.forEach(System.out::println);
 
-        System.out.println("------通用规格-------");
-        List<Param> genericSpecs = specs.stream().filter(param -> param.isGlobal()).collect(Collectors.toList());
-        genericSpecs.forEach(System.out::println);
-        System.out.println("------特殊规格-------");
-        List<Param> specialSpecs = specs.stream().filter(param -> !param.isGlobal()).collect(Collectors.toList());
-        specialSpecs.forEach(System.out::println);
-    }
-
-    @Test
-    public void testQuerySpecsByCid() throws JsonProcessingException {
-        Long cid = 76L;
-        List<Param> specs = specificationService.querySpecsByCid(cid);
-        System.out.println("------所有规格-----------");
-        specs.forEach(System.out::println);
-
-        System.out.println("------通用规格-------");
-        List<Param> genericSpecs = specs.stream().filter(param -> param.isGlobal()).collect(Collectors.toList());
-        genericSpecs.forEach(System.out::println);
-        System.out.println("------特殊规格-------");
-        List<Param> specialSpecs = specs.stream().filter(param -> !param.isGlobal()).collect(Collectors.toList());
-        specialSpecs.forEach(System.out::println);
-    }
 
 }

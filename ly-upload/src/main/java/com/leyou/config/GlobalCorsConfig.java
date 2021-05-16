@@ -22,6 +22,8 @@ public class GlobalCorsConfig {
         configuration.addAllowedMethod(HttpMethod.POST);
         configuration.addAllowedHeader("*");
         configuration.addAllowedOrigin("http://manage.leyou.com");
+        configuration.addAllowedOrigin("http://api.leyou.com");
+        configuration.addAllowedOrigin("http://www.leyou.com");
         configuration.setAllowCredentials(false);
 
         UrlBasedCorsConfigurationSource urlBasedCorsConfigurationSource = new UrlBasedCorsConfigurationSource();

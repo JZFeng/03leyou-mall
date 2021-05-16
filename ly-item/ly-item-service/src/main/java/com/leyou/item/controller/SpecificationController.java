@@ -6,6 +6,7 @@
 package com.leyou.item.controller;
 
 import com.leyou.item.pojo.Param;
+import com.leyou.item.pojo.ParamGroup;
 import com.leyou.item.pojo.Specification;
 import com.leyou.item.service.SpecificationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,4 +52,31 @@ public class SpecificationController {
         }
         return ResponseEntity.ok(params);
     }
+
+    @GetMapping("groups/{cid}")
+    public  ResponseEntity<List<ParamGroup>> querySpecGroups(@PathVariable("cid") Long cid) {
+        List<ParamGroup> paramGroups =  this.specificationService.queryParamGroupByCid(cid);
+        if(CollectionUtils.isEmpty(paramGroups)){
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(paramGroups);
+    }
+
+    @GetMapping("params")
+    public ResponseEntity<List<Param>> querySpecParam(
+            @RequestParam(value = "gid",required = false) Long gid,
+            @RequestParam(value = "cid",required = false) Long cid,
+            @RequestParam(value = "searching",required = false) Boolean searching,
+            @RequestParam(value = "generic",required = false) Boolean generic
+    ) {
+        List<Param> params = this.specificationService.queryParams(gid, cid, searching, generic);
+
+        if(CollectionUtils.isEmpty(params)){
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(params);
+
+    }
+
+
 }
