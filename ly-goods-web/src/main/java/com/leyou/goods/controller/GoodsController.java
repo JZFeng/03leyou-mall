@@ -32,7 +32,11 @@ public class GoodsController {
         mv.setViewName("item");
         Map<String, Object> objectMap = this.goodsService.loadModel(id);
         mv.addAllObjects(objectMap);
-        goodsHtmlService.saveHtml(id); //异步保存
+        if(objectMap != null && objectMap.size() > 0) {
+            goodsHtmlService.asyncSaveHtml(id, objectMap); //异步保存
+            mv.setViewName("error");
+        }
+
         return mv;
     }
 

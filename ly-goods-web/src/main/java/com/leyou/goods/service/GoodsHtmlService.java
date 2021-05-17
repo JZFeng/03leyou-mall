@@ -5,6 +5,7 @@
 
 package com.leyou.goods.service;
 
+import com.leyou.goods.utils.ThreadUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
@@ -13,8 +14,6 @@ import org.thymeleaf.context.Context;
 import java.io.File;
 import java.io.PrintWriter;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 @Service
 public class GoodsHtmlService {
@@ -27,35 +26,36 @@ public class GoodsHtmlService {
     @Autowired
     private TemplateEngine templateEngine;
 
-    private ExecutorService executorService = Executors.newFixedThreadPool(MAX_NUM_OF_THREADS);
+    /**
+     * 需要做的事情抽取成一个函数，然后放到线程中异步执行；
+     * @param spuId
+     * @param objectMap
+     */
+    private void saveHtml(Long spuId, Map<String, Object> objectMap) {
+        if(objectMap != null && objectMap.size() > 0) {
+            PrintWriter writer = null;
 
-    public void saveHtml(Long spuId) {
+            try {
+                File file = new File("/Users/jzfeng/Documents/git/leyou/ly-goods-web/pages/" + spuId + ".html");
+                writer = new PrintWriter(file);
 
-        executorService.submit(new Runnable() {
-            @Override
-            public void run() {
-                PrintWriter writer = null;
+                Context context = new Context();
+                context.setVariables(objectMap);
 
-                try {
-                    File file = new File("/Users/jzfeng/Documents/git/leyou/ly-goods-web/pages/" + spuId + ".html");
-                    writer = new PrintWriter(file);
-
-                    Map<String, Object> objectMap = goodsService.loadModel(spuId);
-                    Context context = new Context();
-                    context.setVariables(objectMap);
-
-                    templateEngine.process("item", context, writer);
-
-                } catch (Exception e) {
-                    System.out.println("页面静态化出错：{}，"+ e + spuId);
-                    e.printStackTrace();
-                } finally {
-                    if (writer != null) {
-                        writer.close();
-                    }
+                templateEngine.process("item", context, writer);
+            } catch (Exception e) {
+                System.out.println("页面静态化"+spuId+"时出错：");
+                e.printStackTrace();
+            } finally {
+                if (writer != null) {
+                    writer.close();
                 }
             }
-        });
+        }
+    }
+
+    public void asyncSaveHtml(Long spuId, Map<String, Object> objectMap) {
+            ThreadUtils.execute(() ->{saveHtml(spuId, objectMap);});
     }
 
 }
