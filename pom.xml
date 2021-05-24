@@ -9,6 +9,7 @@
         <module>ly-upload</module>
         <module>ly-search</module>
         <module>ly-goods-web</module>
+        <module>ly-user</module>
     </modules>
 
     <groupId>com.leyou.parent</groupId>
