@@ -37,7 +37,6 @@ public class GoodsService {
 
     private static final Logger logger = LoggerFactory.getLogger(GoodsService.class);
 
-
     public Map<String, Object> loadModel(Long spuId) {
 
         try {

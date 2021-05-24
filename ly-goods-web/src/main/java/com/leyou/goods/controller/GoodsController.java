@@ -26,14 +26,15 @@ public class GoodsController {
     @Autowired
     private GoodsHtmlService goodsHtmlService;
 
-    @GetMapping("{id}")
+    @GetMapping("{id}.html")
     public ModelAndView toItemPage( @PathVariable(name = "id") Long id) {
         ModelAndView mv = new ModelAndView();
-        mv.setViewName("item");
         Map<String, Object> objectMap = this.goodsService.loadModel(id);
         mv.addAllObjects(objectMap);
         if(objectMap != null && objectMap.size() > 0) {
             goodsHtmlService.asyncSaveHtml(id, objectMap); //异步保存
+            mv.setViewName("item");
+        } else {
             mv.setViewName("error");
         }
 

@@ -1,6 +1,11 @@
 server:
   port: 8083
 spring:
+  rabbitmq:
+    host: jz-ubuntu
+    username: leyou
+    password: leyou
+    virtual-host: /leyou
   main:
     allow-bean-definition-overriding: true
   application:

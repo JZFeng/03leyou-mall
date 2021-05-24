@@ -3,7 +3,7 @@
  * @Date 5/16/21-2:10 PM
  */
 
-package com.leyou.goods.utils;
+package com.leyou.common.utils;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;

@@ -40,6 +40,10 @@
             <artifactId>spring-boot-starter-test</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-amqp</artifactId>
+        </dependency>
+        <dependency>
             <!--Spring 官方提供的热部署插件 -->
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>

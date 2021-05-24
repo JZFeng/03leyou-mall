@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.leyou.item.pojo.Brand;
 import com.leyou.item.pojo.Category;
 import com.leyou.item.pojo.Param;
+import com.leyou.item.pojo.Spu;
 import com.leyou.search.GoodsRepository;
 import com.leyou.search.client.BrandClient;
 import com.leyou.search.client.CategoryClient;
@@ -61,6 +62,9 @@ public class SearchService {
 
     @Autowired
     private GoodsRepository goodsRepository;
+
+    @Autowired
+    private IndexService indexService;
 
     @Autowired
     private ElasticsearchRestTemplate elasticsearchRestTemplate;
@@ -171,37 +175,7 @@ public class SearchService {
      * @return
      *
      * Sample ES Query:
-     * GET goods/_search
-     * {
-     *   "query": {
-     *     "bool": {
-     *       "must": [
-     *         {
-     *           "match": {
-     *             "all": "小米"
-     *           }
-     *         }
-     *       ],
-     *       "filter": [
-     *         {
-     *           "term": {
-     *             "specs.CPU核数.keyword": "八核"
-     *           }
-     *         },
-     *         {
-     *           "term": {
-     *             "specs.机身颜色.keyword": "黑色"
-     *           }
-     *         },
-     *         {
-     *           "term": {
-     *             "specs.主屏幕尺寸（英寸）.keyword": "5.5英寸"
-     *           }
-     *         }
-     *       ]
-     *     }
-     *   }
-     * }
+       GET goods/_search {"query":{"bool":{"must":[{"match":{"all":"小米"}}],"filter":[{"term":{"specs.CPU核数.keyword":"八核"}},{"term":{"specs.机身颜色.keyword":"黑色"}},{"term":{"specs.主屏幕尺寸（英寸）.keyword":"5.5英寸"}}]}}}
      */
     private QueryBuilder buildBasicQueryWithFilters(SearchRequest request) {
 
@@ -260,4 +234,13 @@ public class SearchService {
     }
 
 
+    public void createIndex(Long spuId) {
+        Spu spu = this.goodsClient.querySpuBySpuId(spuId);
+        Goods goods = this.indexService.buildGoods(spu);
+        this.goodsRepository.save(goods);
+    }
+
+    public void deleteIndex(Long spuId) {
+        this.goodsRepository.deleteById(spuId);
+    }
 }

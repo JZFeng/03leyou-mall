@@ -1,6 +1,12 @@
 server:
   port: 8084
 spring:
+  rabbitmq:
+    host: jz-ubuntu
+    username: leyou
+    password: leyou
+    virtual-host: /leyou
+
   application:
     name: goods-page
   thymeleaf:

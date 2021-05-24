@@ -5,6 +5,13 @@ server:
 spring:
   application:
     name: item-service
+  rabbitmq:
+    host: jz-ubuntu
+    username: leyou
+    password: leyou
+    virtual-host: /leyou
+    template:
+      exchange: leyou.item.exchange
 
   datasource:
     url: jdbc:mysql://jz-ubuntu:3306/leyou?characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
@@ -14,6 +21,7 @@ spring:
       maximum-pool-size: 30
       minimum-idle: 10
       idle-timeout: 60000
+
 eureka:
   client:
     service-url:
