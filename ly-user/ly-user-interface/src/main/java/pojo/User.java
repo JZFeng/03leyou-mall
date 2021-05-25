@@ -37,5 +37,4 @@ public class User {
     @JsonIgnore
     private String salt;
 
-
 }

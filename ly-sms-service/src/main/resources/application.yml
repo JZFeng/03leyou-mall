@@ -1,0 +1,32 @@
+server:
+  port: 8086
+
+spring:
+  application:
+    name: sms-service
+
+  rabbitmq:
+    host: jz-ubuntu
+    username: leyou
+    password: leyou
+    virtual-host: /leyou
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://127.0.0.1:10086/eureka
+  instance:
+    prefer-ip-address: true
+    ip-address: 127.0.0.1
+    instance-id: ${spring.application.name}:${server.port}
+    lease-renewal-interval-in-seconds: 5
+    lease-expiration-duration-in-seconds: 10
+
+
+##把常量抽取到applicaton.yml配置文件中
+leyou:
+  sms:
+    accessKeyId: JWffwFJIwada
+    accessKeySecrte: aySRliswq8fe7rF9gQyy1Izz4MQ
+    signName: 乐优商城
+    verifyCodeTemplate: SMS_133976814

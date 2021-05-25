@@ -4,6 +4,9 @@ server:
 spring:
   application:
     name: user-service
+  redis:
+    host: jz-ubuntu
+
 
   datasource:
     url: jdbc:mysql://jz-ubuntu:3306/leyou?characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
