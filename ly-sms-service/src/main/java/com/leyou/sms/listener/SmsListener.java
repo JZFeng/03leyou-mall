@@ -37,21 +37,22 @@ public class SmsListener {
             )
     })
     public void listenSms(Map<String, String> msg) {
+        try {
+            if(msg == null || msg.size() <= 0) {
+                return;
+            }
 
-        if(msg == null || msg.size() <= 0) {
-            return;
+            String phone = msg.get("phone");
+            String code = msg.get("code");
+            if(StringUtils.isBlank(phone) || StringUtils.isBlank(code)) {
+                return;
+            }
+
+            System.out.println("phone:" + phone + ";" + "code:" + code);
+            //SendSmsResponse sendSmsResponse = this.smsUtils.sendSms(phone, code, properties.getSignName(), properties.getVerifyCodeTemplate());
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
-        String phone = msg.get("phone");
-        String code = msg.get("code");
-
-        if(StringUtils.isBlank(phone) || StringUtils.isBlank(code)) {
-            return;
-        }
-
-        SendSmsResponse sendSmsResponse = this.smsUtils.sendSms(phone, code, properties.getSignName(), properties.getVerifyCodeTemplate());
-        //发送失败抛，直接异常
-        throw new RuntimeException();
     }
 
 }

@@ -6,6 +6,7 @@
 package pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.*;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.GeneratedValue;
@@ -14,6 +15,12 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.Pattern;
 import java.util.Date;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
+@Builder
 
 @Table(name = "tb_user")
 public class User {
