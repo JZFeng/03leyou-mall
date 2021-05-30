@@ -15,8 +15,8 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 
 public class JwtTest {
-    public static final String pubKeyPath = "/Users/jzfeng/Documents/git/leyou/ly-auth/ly-auth-common/rsa/rsa.pub";
-    public static final String priKeyPath = "/Users/jzfeng/Documents/git/leyou/ly-auth/ly-auth-common/rsa/rsa.pri";
+    public static final String pubKeyPath = "/Users/jzfeng/Documents/git/leyou/ly-auth/rsa/rsa.pub";
+    public static final String priKeyPath = "/Users/jzfeng/Documents/git/leyou/ly-auth/rsa/rsa.pri";
 
     private PublicKey publicKey;
     private PrivateKey privateKey;
@@ -51,7 +51,7 @@ public class JwtTest {
 
     @Test
     public void testParseToken() {
-        String token = "eyJhbGciOiJSUzI1NiJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJKYXNvbiIsImV4cCI6MTYyMjIxOTk0N30.P5zqEuzp6_QIL9yiWKkRDdOX5YtelwhNXr7Il2AYtCwiZiN3vfy4i8zcX-SqwRQysWhbPqvCOAyNn_ACsmFry7drJhQ2l-l-bHDnjE1sGXsRYi-MUNY81P1H-__0pf0XD0acsyGSz87neLCLK4DT0kwC9_BgKgU7ir1w7AWqTzQ";
+        String token = "eyJhbGciOiJSUzI1NiJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJKYXNvbiIsImV4cCI6MTYyMjQwMjY5N30.Yc5RWoUJBL_Fco3P4ZymJIzx92G0o6_ucoZEziAoklKHol2L3jF95MVI2cOv59E_CSoRHznA3gbQQEqIOFRSwZI6QpWgw4-dAl-1MQ_Ye2zeWjQi9vqPaQpX6HO2hSNHwXZ85aAlzSi_GfXdhpIm3sK4qzhN5INhAtGSSc3eby4";
         UserInfo us = JwtUtils.getInfoFromToken(token, publicKey);
         System.out.println(us);
     }
