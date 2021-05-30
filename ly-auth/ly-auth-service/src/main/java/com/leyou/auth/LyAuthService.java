@@ -3,7 +3,7 @@
  * @Date 5/27/21-9:13 PM
  */
 
-package leyou.com.auth;
+package com.leyou.auth;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

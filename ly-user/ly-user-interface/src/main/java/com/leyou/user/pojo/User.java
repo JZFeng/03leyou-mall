@@ -3,7 +3,7 @@
  * @Date 5/24/21-3:32 PM
  */
 
-package pojo;
+package com.leyou.user.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;

@@ -14,7 +14,7 @@ import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
-import pojo.User;
+import com.leyou.user.pojo.User;
 
 import java.util.Date;
 import java.util.HashMap;
