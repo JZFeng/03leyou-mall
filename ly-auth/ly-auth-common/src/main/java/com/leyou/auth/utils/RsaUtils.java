@@ -13,11 +13,16 @@ public class RsaUtils {
      *
      * @param filename 公钥保存路径，相对于classpath
      * @return 公钥对象
-     * @throws Exception
      */
-    public static PublicKey getPublicKey(String filename) throws Exception {
-        byte[] bytes = readFile(filename);
-        return getPublicKey(bytes);
+    public static PublicKey getPublicKey(String filename) {
+        byte[] bytes = new byte[0];
+        try {
+            bytes = readFile(filename);
+            return getPublicKey(bytes);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     /**
@@ -25,11 +30,15 @@ public class RsaUtils {
      *
      * @param filename 私钥保存路径，相对于classpath
      * @return 私钥对象
-     * @throws Exception
      */
-    public static PrivateKey getPrivateKey(String filename) throws Exception {
-        byte[] bytes = readFile(filename);
-        return getPrivateKey(bytes);
+    public static PrivateKey getPrivateKey(String filename) {
+        try {
+            byte[] bytes = readFile(filename);
+            return getPrivateKey(bytes);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     /**
@@ -37,12 +46,16 @@ public class RsaUtils {
      *
      * @param bytes 公钥的字节形式
      * @return
-     * @throws Exception
      */
-    public static PublicKey getPublicKey(byte[] bytes) throws Exception {
-        X509EncodedKeySpec spec = new X509EncodedKeySpec(bytes);
-        KeyFactory factory = KeyFactory.getInstance("RSA");
-        return factory.generatePublic(spec);
+    public static PublicKey getPublicKey(byte[] bytes) {
+        try {
+            X509EncodedKeySpec spec = new X509EncodedKeySpec(bytes);
+            KeyFactory factory = KeyFactory.getInstance("RSA");
+            return factory.generatePublic(spec);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     /**
@@ -50,12 +63,17 @@ public class RsaUtils {
      *
      * @param bytes 私钥的字节形式
      * @return
-     * @throws Exception
      */
-    public static PrivateKey getPrivateKey(byte[] bytes) throws Exception {
-        PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(bytes);
-        KeyFactory factory = KeyFactory.getInstance("RSA");
-        return factory.generatePrivate(spec);
+    public static PrivateKey getPrivateKey(byte[] bytes) {
+        try {
+            PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(bytes);
+            KeyFactory factory = KeyFactory.getInstance("RSA");
+            return factory.generatePrivate(spec);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+
     }
 
     /**
