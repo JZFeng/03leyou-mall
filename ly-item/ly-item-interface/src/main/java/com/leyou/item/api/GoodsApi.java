@@ -29,6 +29,9 @@ public interface GoodsApi {
     @GetMapping("sku/list")
     public List<Sku> querySkuBySpuId(@RequestParam(name = "id") Long id);
 
+    @GetMapping("sku/{id}")
+    public Sku querySkuById(@PathVariable("id") Long id);
+
     @PostMapping("goods")
     public void saveGoods(@RequestBody SpuBo spu);
 

@@ -27,6 +27,7 @@ zuul:
     search-service: /search/**
     user-service: /user/**
     auth-service: /auth/**
+    cart-service: /cart/**
 
   add-host-header: true
   sensitive-headers:

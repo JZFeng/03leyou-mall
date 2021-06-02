@@ -39,6 +39,7 @@ public class RedisTest {
         BoundHashOperations<String, Object, Object> hashOps = this.stringRedisTemplate.boundHashOps("user");
         hashOps.put("name","jack");
         hashOps.put("age","21");
+        hashOps.expire(14, TimeUnit.DAYS); //保留14天，等checkout之后就删除
         //
         System.out.println(hashOps.get("name"));
 

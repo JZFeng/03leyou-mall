@@ -80,6 +80,16 @@ public class GoodsController {
     }
 
 
+    @GetMapping("sku/{id}")
+    public ResponseEntity<Sku> querySkuById(@PathVariable("id") Long id) {
+        Sku sku = this.goodsService.querySkuById(id);
+        if(sku == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(sku);
+    }
+
 
     @PostMapping("goods")
     public ResponseEntity<Void> saveGoods(@RequestBody SpuBo spu) {

@@ -191,4 +191,8 @@ public class GoodsService {
             sendMessage(spuId, msgType);});
     }
 
+    public Sku querySkuById(Long id) {
+        Sku sku = this.skuMapper.selectByPrimaryKey(id);
+        return sku;
+    }
 }
