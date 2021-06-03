@@ -17,6 +17,7 @@ spring:
     url: jdbc:mysql://jz-ubuntu:3306/leyou?characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
     username: leyou
     password: Telenav22!
+    driver-class-name: com.mysql.cj.jdbc.Driver
     hikari:
       maximum-pool-size: 30
       minimum-idle: 10
