@@ -3,7 +3,6 @@ package com.leyou.order.service;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.leyou.auth.pojo.UserInfo;
-import com.leyou.auth.pojo.UserInfo;
 import com.leyou.common.pojo.PageResult;
 import com.leyou.common.utils.IdWorker;
 import com.leyou.order.interceptor.LoginInterceptor;
@@ -88,7 +87,7 @@ public class OrderService {
         return order;
     }
 
-    public PageResult<Order> queryUserOrderList(Integer page, Integer rows, Integer status) {
+    public PageResult queryUserOrderList(Integer page, Integer rows, Integer status) {
         try {
             // 分页
             PageHelper.startPage(page, rows);
@@ -97,7 +96,7 @@ public class OrderService {
             // 创建查询条件
             Page<Order> pageInfo = (Page<Order>) this.orderMapper.queryOrderList(user.getId(), status);
 
-            return new PageResult<>(pageInfo.getTotal(), pageInfo);
+            return new PageResult<Order>(pageInfo.getTotal(), pageInfo.getPages() +0L, pageInfo.getResult());
         } catch (Exception e) {
             logger.error("查询订单出错", e);
             return null;
