@@ -8,6 +8,7 @@ package com.leyou.item.pojo;
 import lombok.*;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Table(name = "tb_brand")
 @Data
@@ -15,7 +16,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @ToString
 @Builder
-public class Brand {
+public class Brand implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

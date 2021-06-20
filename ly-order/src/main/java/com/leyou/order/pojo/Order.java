@@ -2,11 +2,12 @@ package com.leyou.order.pojo;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
 @Table(name = "tb_order")
-public class Order {
+public class Order implements Serializable {
 
     @Id
     private Long orderId;// id

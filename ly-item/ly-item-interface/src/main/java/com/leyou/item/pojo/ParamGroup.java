@@ -7,6 +7,7 @@ package com.leyou.item.pojo;
 
 import lombok.*;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -18,7 +19,7 @@ import java.util.List;
 @Builder
 @ToString
 
-public class ParamGroup {
+public class ParamGroup implements Serializable  {
 
     private Long id;
 

@@ -7,6 +7,7 @@ package com.leyou.common.pojo;
 
 import lombok.*;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Data
@@ -15,7 +16,7 @@ import java.util.List;
 @ToString
 @Builder
 
-public class PageResult<T> {
+public class PageResult<T> implements Serializable {
     private Long total;
     private Long totalPage;
     private List<T> items;

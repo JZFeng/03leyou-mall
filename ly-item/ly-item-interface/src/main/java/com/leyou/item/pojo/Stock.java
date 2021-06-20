@@ -11,13 +11,14 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.io.Serializable;
 
 @Table(name = "tb_stock")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 
-public class Stock {
+public class Stock implements Serializable  {
     @Id
     private Long skuId;
     private Integer seckillStock; //秒杀可用库存

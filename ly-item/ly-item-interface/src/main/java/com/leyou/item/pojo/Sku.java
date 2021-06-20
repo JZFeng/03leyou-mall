@@ -8,6 +8,7 @@ package com.leyou.item.pojo;
 import lombok.*;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 
 @Table(name = "tb_sku")
@@ -16,7 +17,7 @@ import java.util.Date;
 @AllArgsConstructor
 @Builder
 @ToString
-public class Sku {
+public class Sku implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

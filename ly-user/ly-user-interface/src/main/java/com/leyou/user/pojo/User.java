@@ -14,6 +14,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.Pattern;
+import java.io.Serializable;
 import java.util.Date;
 
 @Data
@@ -23,7 +24,7 @@ import java.util.Date;
 @Builder
 
 @Table(name = "tb_user")
-public class User {
+public class User implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

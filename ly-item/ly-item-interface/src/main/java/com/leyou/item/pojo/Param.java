@@ -8,6 +8,7 @@ package com.leyou.item.pojo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -19,7 +20,7 @@ import java.util.List;
 @Builder
 @ToString
 
-public class Param {
+public class Param implements Serializable {
 
     private Long id;
 

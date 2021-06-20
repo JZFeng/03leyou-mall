@@ -7,8 +7,10 @@ package com.leyou.cart.pojo;
 
 import lombok.*;
 
+import java.io.Serializable;
+
 @Data @AllArgsConstructor @Builder @ToString @NoArgsConstructor
-public class Cart {
+public class Cart implements Serializable {
     private Long userId;
     private Long skuId;
     private String title;

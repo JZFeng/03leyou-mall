@@ -8,6 +8,7 @@ package com.leyou.search.pojo;
 import lombok.*;
 import org.apache.commons.lang.StringUtils;
 
+import java.io.Serializable;
 import java.util.Map;
 
 @Data
@@ -15,7 +16,7 @@ import java.util.Map;
 @NoArgsConstructor
 @ToString
 @Builder
-public class SearchRequest {
+public class SearchRequest implements Serializable {
     private static final Integer DEFAULT_SIZE = 20;
     private static final Integer DEFAULT_PAGE = 1;
 

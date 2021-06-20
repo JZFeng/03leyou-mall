@@ -11,12 +11,13 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.io.Serializable;
 
 @Table(name = "tb_spu_detail")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class SpuDetails {
+public class SpuDetails implements Serializable {
     @Id
     private Long spuId;
     private String description;

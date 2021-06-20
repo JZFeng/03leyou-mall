@@ -10,6 +10,7 @@ import com.leyou.item.pojo.Brand;
 import com.leyou.item.pojo.Category;
 import lombok.*;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
@@ -18,7 +19,7 @@ import java.util.Map;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class SearchResult extends PageResult<Goods> {
+public class SearchResult extends PageResult<Goods> implements Serializable {
     private List<Brand> brands;
     private List<Category> categories;
     Map<String, Object> specs;

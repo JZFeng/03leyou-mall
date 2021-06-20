@@ -11,12 +11,13 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.io.Serializable;
 
 @Table(name = "tb_specification")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Specification {
+public class Specification implements Serializable {
     @Id
     private Long categoryId;
     private String specifications;
