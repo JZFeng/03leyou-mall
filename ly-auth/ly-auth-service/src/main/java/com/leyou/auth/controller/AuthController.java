@@ -52,7 +52,7 @@ public class AuthController {
             UserInfo userInfo = JwtUtils.getInfoFromToken(token, prop.getPublicKey());
             if(userInfo != null ) {
                 String new_token = JwtUtils.generateToken(userInfo, this.prop.getPrivateKey(), this.prop.getExpire());
-                CookieUtils.setCookie(request, response, this.prop.getCookieName(), token, this.prop.getCookieMaxAge());
+                CookieUtils.setCookie(request, response, this.prop.getCookieName(), new_token, this.prop.getCookieMaxAge());
                 return ResponseEntity.ok(userInfo);
             }
         } catch (Exception e) {

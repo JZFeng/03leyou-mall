@@ -34,7 +34,6 @@ public class Param implements Serializable {
     private String v;
     private String unit;
 
-
     private List<String> options;
 
 }

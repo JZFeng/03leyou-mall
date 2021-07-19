@@ -70,10 +70,6 @@ public class CartService {
         String key = KEY_PREFIX + user.getId();
         BoundHashOperations<String, Object, Object> hashOps = this.stringRedisTemplate.boundHashOps(key);
 
-        /*     hashOps.entries().entrySet().forEach( e -> {
-            System.out.println(e.getKey().toString() + e.getValue().toString());
-        } );*/
-
         List<Object> carts = hashOps.values();
         if (CollectionUtils.isEmpty(carts)) {
             return result;
@@ -83,8 +79,8 @@ public class CartService {
     }
 
     public void updateNum(Long skuId, Integer num) {
-        UserInfo user = LoginInterceptor.getLoginUser();
-//                UserInfo user = new UserInfo(1L, "jason");
+//        UserInfo user = LoginInterceptor.getLoginUser();
+        UserInfo user = new UserInfo(1L, "jason");
         String key = KEY_PREFIX + user.getId();
         BoundHashOperations<String, Object, Object> hashOps = this.stringRedisTemplate.boundHashOps(key);
         Cart cart = JsonUtils.parse(hashOps.get(skuId.toString()).toString(), Cart.class);
@@ -99,6 +95,6 @@ public class CartService {
         BoundHashOperations<String, Object, Object> hashOps = this.stringRedisTemplate.boundHashOps(key);
 
         hashOps.delete(skuId.toString());
-
     }
+
 }

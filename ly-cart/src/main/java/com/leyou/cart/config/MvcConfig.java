@@ -15,6 +15,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 @EnableConfigurationProperties(JwtProperties.class)
+//配置SpringMVC，使过滤器生效：
 public class MvcConfig implements WebMvcConfigurer {
 
     @Autowired

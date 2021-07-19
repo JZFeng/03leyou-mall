@@ -19,6 +19,7 @@ import java.util.Map;
 public class SearchRequest implements Serializable {
     private static final Integer DEFAULT_SIZE = 20;
     private static final Integer DEFAULT_PAGE = 1;
+    private static final Integer MAX_PAGE_SIZE = 100;
 
     private String key = ""; //需要给缺省值
     private Integer page;
@@ -38,7 +39,7 @@ public class SearchRequest implements Serializable {
         if(size == null || size < 1) {
             size = DEFAULT_SIZE;
         }
-        return Math.min(100, size);
+        return Math.min(MAX_PAGE_SIZE, size);
     }
 
     public String getSortBy() {
