@@ -15,8 +15,8 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 
 public class JwtTest {
-    public static final String pubKeyPath = "/Users/jzfeng/Documents/git/leyou/ly-auth/rsa/rsa.pub";
-    public static final String priKeyPath = "/Users/jzfeng/Documents/git/leyou/ly-auth/rsa/rsa.pri";
+    public static final String pubKeyPath = "/Users/jzfeng/Documents/git/03leyou-mall/ly-auth/rsa/rsa.pub";
+    public static final String priKeyPath = "/Users/jzfeng/Documents/git/03leyou-mall/ly-auth/rsa/rsa.pri";
 
     private PublicKey publicKey;
     private PrivateKey privateKey;
@@ -32,7 +32,7 @@ public class JwtTest {
         }
     }
 
-    @Before
+//    @Before
     public void testGetRsa() {
         try {
             publicKey = RsaUtils.getPublicKey(pubKeyPath);
